@@ -1,7 +1,25 @@
+const CACHE = 'alnoor-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
+
 self.addEventListener('install', event => {
-  console.log('Service Worker installed');
+  event.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('fetch', event => {
-  // You can add caching later
+  event.respondWith(
+    caches.match(event.request).then(r => r || fetch(event.request))
+  );
 });
