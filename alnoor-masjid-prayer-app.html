@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Al Noor"/>
+<meta name="theme-color" content="#0a1628"/>
+<title>Al Noor Masjid – Prayer Times</title>
+<link rel="manifest" id="manifest-placeholder"/>
+<style>
+  :root {
+    --gold:#d4af37; --gold2:#f0d060; --green:#1a4a2e; --green2:#0d2820;
+    --bg:#0a1628; --bg2:#0d2137; --text:#e8d5a3; --muted:#8aa4b0;
+    --card:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.08);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Georgia',serif}
+  body{display:flex;flex-direction:column}
+
+  /* SCROLLABLE CONTENT */
+  #app{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(72px + var(--safe-bottom));padding-top:calc(var(--safe-top))}
+  #app::-webkit-scrollbar{display:none}
+
+  /* BACKGROUND */
+  .bg-layer{position:fixed;inset:0;z-index:-1;
+    background:linear-gradient(160deg,#0a1628 0%,#0d2137 50%,#091a14 100%)}
+  .bg-pattern{position:fixed;inset:0;z-index:-1;opacity:0.035;
+    background-image:repeating-linear-gradient(45deg,#d4af37 0,#d4af37 1px,transparent 0,transparent 50%);
+    background-size:30px 30px}
+
+  /* HEADER */
+  .header{text-align:center;padding:20px 16px 12px;padding-top:calc(20px + var(--safe-top))}
+  .header-mosque{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:3px}
+  .header-title{font-size:24px;font-weight:bold;color:#fff;line-height:1.2}
+  .header-subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+  .header-hijri{font-size:11px;color:var(--gold);margin-top:2px;opacity:0.8}
+
+  /* BOTTOM NAV */
+  .nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
+    background:rgba(8,18,30,0.97);backdrop-filter:blur(24px);
+    border-top:1px solid rgba(212,175,55,0.2);
+    display:flex;justify-content:space-around;
+    padding:10px 0;padding-bottom:calc(10px + var(--safe-bottom))}
+  .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;
+    align-items:center;gap:3px;padding:4px 16px;position:relative}
+  .nav-btn .nav-icon{font-size:22px;transition:transform 0.2s}
+  .nav-btn .nav-label{font-size:10px;letter-spacing:0.5px;transition:color 0.2s}
+  .nav-btn.active .nav-label{color:var(--gold)}
+  .nav-btn.active .nav-icon{transform:scale(1.1)}
+  .nav-dot{position:absolute;top:2px;right:10px;width:7px;height:7px;
+    background:var(--gold);border-radius:50%;display:none}
+  .nav-dot.show{display:block}
+
+  /* TAB PAGES */
+  .tab{display:none;padding:0 14px 8px;animation:fadeIn 0.25s ease}
+  .tab.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* CARDS */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px}
+  .card-gold{background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(0,80,40,0.15));border-color:rgba(212,175,55,0.35);box-shadow:0 6px 30px rgba(212,175,55,0.1)}
+  .card-active{background:linear-gradient(135deg,rgba(212,175,55,0.18),rgba(0,90,50,0.25));border-color:rgba(212,175,55,0.5)}
+
+  /* NEXT PRAYER HERO */
+  .hero{position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 50%,rgba(212,175,55,0.08),transparent 60%)}
+  .hero-label{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+  .hero-row{display:flex;align-items:flex-start;justify-content:space-between}
+  .hero-prayer{font-size:30px;font-weight:bold;color:#fff;display:flex;align-items:center;gap:10px}
+  .hero-arabic{font-size:18px;color:var(--gold);opacity:0.8;font-weight:normal}
+  .hero-jamaat{font-size:26px;font-weight:bold;color:var(--gold);margin-top:2px}
+  .hero-begins{font-size:12px;color:var(--muted);margin-top:2px}
+  .hero-timer{text-align:right}
+  .hero-timer-num{font-size:42px;font-weight:bold;color:#fff;line-height:1}
+  .hero-timer-sub{font-size:11px;color:var(--muted)}
+  .countdown-bar{height:3px;background:rgba(212,175,55,0.15);border-radius:99px;margin-top:14px;overflow:hidden}
+  .countdown-fill{height:100%;background:linear-gradient(90deg,var(--gold),#90ee90);border-radius:99px;transition:width 1s linear}
+
+  /* WAQT END STRIP */
+  .waqt-strip{display:flex;align-items:center;justify-content:space-between;
+    background:rgba(0,0,0,0.25);border-radius:10px;padding:8px 12px;margin-top:10px}
+  .waqt-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+  .waqt-val{font-size:13px;color:#e8c060;font-weight:bold}
+  .waqt-remaining{font-size:11px;color:var(--muted)}
+
+  /* PRAYER LIST */
+  .prayer-row{display:flex;align-items:center;gap:10px;padding:12px 14px;
+    border-radius:14px;margin-bottom:8px;border:1px solid transparent;transition:all 0.2s}
+  .prayer-row.p-active{background:linear-gradient(90deg,rgba(212,175,55,0.12),rgba(0,80,40,0.1));border-color:rgba(212,175,55,0.3)}
+  .prayer-row.p-done{opacity:0.5}
+  .prayer-icon{font-size:22px;width:34px;text-align:center;flex-shrink:0}
+  .prayer-info{flex:1}
+  .prayer-name{font-size:15px;font-weight:bold;color:#fff}
+  .prayer-name span{font-size:11px;color:var(--muted);font-weight:normal;margin-left:4px}
+  .prayer-sub{font-size:11px;color:var(--muted);margin-top:1px}
+  .prayer-times{text-align:right;margin-right:8px}
+  .prayer-jamaat{font-size:15px;font-weight:bold;color:var(--gold)}
+  .prayer-begins{font-size:10px;color:var(--muted)}
+  .bell-btn{width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    background:rgba(212,175,55,0.12);transition:all 0.2s;flex-shrink:0}
+  .bell-btn.on{background:var(--gold);box-shadow:0 2px 10px rgba(212,175,55,0.4)}
+
+  /* LONDON WAQT STRIP (corner widget) */
+  .london-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:12px}
+  .london-cell{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;
+    padding:6px 4px;text-align:center}
+  .london-cell.lc-active{border-color:rgba(212,175,55,0.4);background:rgba(212,175,55,0.08)}
+  .lc-name{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+  .lc-time{font-size:12px;color:var(--text);font-weight:bold;margin:2px 0}
+  .lc-ends{font-size:9px;color:#e8c060}
+
+  /* TIMETABLE */
+  .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px}
+  .month-btn{background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.25);
+    border-radius:10px;width:36px;height:36px;color:var(--gold);font-size:18px;cursor:pointer}
+  .month-title{font-size:17px;font-weight:bold;color:#fff}
+  .tt-header{display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 1fr;gap:2px;margin-bottom:6px}
+  .tt-hcell{font-size:9px;color:var(--gold);text-align:center;font-weight:bold;letter-spacing:0.5px;padding:2px}
+  .tt-row{display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 1fr;gap:2px;
+    padding:5px 4px;border-radius:10px;margin-bottom:2px;border:1px solid transparent}
+  .tt-row.tt-today{background:linear-gradient(90deg,rgba(212,175,55,0.15),rgba(0,70,40,0.1));border-color:rgba(212,175,55,0.35)}
+  .tt-row.tt-sun{background:rgba(212,175,55,0.04)}
+  .tt-cell{font-size:11px;color:#c0b090;text-align:center;padding:1px}
+  .tt-day{font-size:11px;text-align:center;color:var(--muted);font-weight:bold}
+  .tt-row.tt-today .tt-day{color:var(--gold)}
+
+  /* TRACKER */
+  .tracker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .tracker-title{font-size:18px;font-weight:bold;color:#fff}
+  .tracker-score{font-size:13px;color:var(--gold)}
+  .tracker-week{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+  .tracker-week::-webkit-scrollbar{display:none}
+  .week-day{flex-shrink:0;text-align:center;cursor:pointer}
+  .wd-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+  .wd-circle{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.05);
+    border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;
+    font-size:11px;color:var(--muted);margin:0 auto;position:relative;transition:all 0.2s}
+  .wd-circle.wd-today{border-color:var(--gold);color:var(--gold)}
+  .wd-circle.wd-full{background:var(--gold);border-color:var(--gold);color:#0a1628}
+  .wd-dot{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+    width:4px;height:4px;border-radius:50%;background:var(--gold)}
+
+  .tracker-prayers{display:flex;flex-direction:column;gap:8px}
+  .tp-row{display:flex;align-items:center;gap:12px;padding:12px 16px;
+    background:var(--card);border:1px solid var(--border);border-radius:14px;
+    cursor:pointer;transition:all 0.2s;user-select:none}
+  .tp-row:active{transform:scale(0.98)}
+  .tp-row.tp-done{background:linear-gradient(90deg,rgba(0,120,60,0.15),rgba(0,80,40,0.1));
+    border-color:rgba(0,200,100,0.25)}
+  .tp-icon{font-size:22px;width:32px;text-align:center}
+  .tp-info{flex:1}
+  .tp-name{font-size:15px;font-weight:bold;color:#fff}
+  .tp-time{font-size:11px;color:var(--muted);margin-top:1px}
+  .tp-check{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);
+    display:flex;align-items:center;justify-content:center;font-size:14px;
+    transition:all 0.25s;background:transparent}
+  .tp-row.tp-done .tp-check{background:#22c55e;border-color:#22c55e;box-shadow:0 0 12px rgba(34,197,94,0.4)}
+
+  .streak-card{margin-top:16px}
+  .streak-row{display:flex;align-items:center;justify-content:space-around;padding:4px}
+  .streak-item{text-align:center}
+  .streak-num{font-size:26px;font-weight:bold;color:var(--gold)}
+  .streak-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+  /* INFO */
+  .info-row{margin-bottom:12px}
+  .info-label{font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+  .info-val{font-size:14px;color:var(--text)}
+
+  /* TOAST */
+  .toast{position:fixed;top:calc(20px + var(--safe-top));left:50%;transform:translateX(-50%) translateY(-80px);
+    background:rgba(20,50,35,0.97);border:1px solid rgba(212,175,55,0.4);border-radius:14px;
+    padding:10px 20px;font-size:13px;color:var(--text);z-index:9999;
+    box-shadow:0 8px 30px rgba(0,0,0,0.5);white-space:nowrap;
+    transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  /* NOTIF BANNER */
+  .notif-banner{display:flex;align-items:center;gap:10px;
+    background:rgba(212,175,55,0.08);border:1px dashed rgba(212,175,55,0.35);
+    border-radius:14px;padding:12px 16px;margin-bottom:12px;cursor:pointer;
+    font-size:13px;color:var(--gold)}
+  .notif-banner span{flex:1}
+
+  /* ADHAN PLAYER */
+  .adhan-player{display:flex;align-items:center;gap:10px;
+    background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 14px;margin-top:10px}
+  .adhan-label{font-size:11px;color:var(--muted);flex:1}
+  .adhan-btn{background:var(--gold);border:none;border-radius:8px;width:32px;height:32px;
+    font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+  /* PROGRESS RING */
+  .prog-ring{width:64px;height:64px;flex-shrink:0}
+  .prog-ring circle{fill:none;stroke-width:4}
+  .prog-bg{stroke:rgba(212,175,55,0.15)}
+  .prog-fill{stroke:var(--gold);stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s linear}
+
+  /* INSTALL GUIDE */
+  .install-step{display:flex;align-items:flex-start;gap:12px;padding:12px;
+    background:var(--card);border-radius:12px;margin-bottom:8px}
+  .install-num{width:26px;height:26px;border-radius:50%;background:var(--gold);
+    color:#0a1628;font-size:12px;font-weight:bold;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0}
+  .install-text{font-size:13px;color:var(--text);line-height:1.5}
+
+  /* SHARE BUTTON */
+  .share-btn{width:100%;background:linear-gradient(135deg,var(--gold),#b8920a);
+    border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:bold;
+    color:#0a1628;cursor:pointer;letter-spacing:0.5px;margin-top:8px;
+    box-shadow:0 4px 20px rgba(212,175,55,0.3)}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="bg-pattern"></div>
+<div id="toast" class="toast"></div>
+<audio id="adhan-audio" preload="none" crossorigin="anonymous"></audio>
+
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-mosque">Al Noor Masjid · Romford</div>
+    <div class="header-title">Prayer Times 🕌</div>
+    <div class="header-subtitle" id="hdr-date">Loading…</div>
+    <div class="header-hijri" id="hdr-hijri"></div>
+  </div>
+
+  <!-- TODAY TAB -->
+  <div id="tab-today" class="tab active">
+    <div id="notif-banner" class="notif-banner" onclick="requestNotif()">
+      <span>🔔 Tap to enable Adhan reminders (30 min before Jama'at)</span>
+      <span style="font-size:18px">›</span>
+    </div>
+
+    <!-- LONDON WAQT BAR -->
+    <div id="london-strip" class="london-strip"></div>
+
+    <!-- NEXT PRAYER HERO -->
+    <div id="hero-card" class="card card-gold hero" style="margin-bottom:12px">
+      <div class="hero-label">⏳ Next Jama'at</div>
+      <div class="hero-row">
+        <div>
+          <div class="hero-prayer" id="hero-name">—</div>
+          <div class="hero-jamaat" id="hero-jamaat">—</div>
+          <div class="hero-begins" id="hero-begins"></div>
+        </div>
+        <div class="hero-timer">
+          <svg class="prog-ring" viewBox="0 0 64 64">
+            <circle class="prog-bg" cx="32" cy="32" r="28"/>
+            <circle class="prog-fill" id="prog-circle" cx="32" cy="32" r="28" stroke-dasharray="176" stroke-dashoffset="176"/>
+          </svg>
+          <div class="hero-timer-num" id="hero-mins">—</div>
+          <div class="hero-timer-sub">minutes</div>
+        </div>
+      </div>
+      <div class="waqt-strip">
+        <div><div class="waqt-label">Waqt ends</div><div class="waqt-val" id="hero-waqt-end">—</div></div>
+        <div style="text-align:right"><div class="waqt-label">Time remaining</div><div class="waqt-remaining" id="hero-waqt-rem">—</div></div>
+      </div>
+      <div class="countdown-bar"><div class="countdown-fill" id="countdown-fill" style="width:0%"></div></div>
+      <div class="adhan-player">
+        <div class="adhan-label">🔊 Madinah Adhan</div>
+        <button class="adhan-btn" onclick="playAdhan()" title="Play Adhan">▶</button>
+        <button class="adhan-btn" onclick="stopAdhan()" style="background:rgba(212,175,55,0.3)" title="Stop">■</button>
+      </div>
+    </div>
+
+    <!-- PRAYER LIST -->
+    <div id="prayer-list"></div>
+  </div>
+
+  <!-- TIMETABLE TAB -->
+  <div id="tab-timetable" class="tab">
+    <div class="month-nav">
+      <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="month-title" id="month-title"></div>
+      <button class="month-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="tt-header">
+      <div class="tt-hcell"></div>
+      <div class="tt-hcell">Fajr</div>
+      <div class="tt-hcell">Zuhr</div>
+      <div class="tt-hcell">Asr</div>
+      <div class="tt-hcell">Maghrib</div>
+      <div class="tt-hcell">Isha</div>
+    </div>
+    <div id="tt-body"></div>
+  </div>
+
+  <!-- TRACKER TAB -->
+  <div id="tab-tracker" class="tab">
+    <div class="tracker-header">
+      <div class="tracker-title">Prayer Tracker</div>
+      <div class="tracker-score" id="tracker-score"></div>
+    </div>
+    <div class="tracker-week" id="tracker-week"></div>
+    <div id="tracker-prayers" class="tracker-prayers"></div>
+    <div class="card streak-card">
+      <div class="streak-row">
+        <div class="streak-item"><div class="streak-num" id="streak-today">0/5</div><div class="streak-label">Today</div></div>
+        <div class="streak-item"><div class="streak-num" id="streak-week">0</div><div class="streak-label">This Week</div></div>
+        <div class="streak-item"><div class="streak-num" id="streak-streak">0🔥</div><div class="streak-label">Day Streak</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO / INSTALL TAB -->
+  <div id="tab-info" class="tab">
+    <div class="card card-gold" style="margin-bottom:12px">
+      <div style="font-size:19px;font-weight:bold;color:var(--gold);margin-bottom:4px">🕌 Al Noor Masjid</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">and Education Trust</div>
+      <div id="masjid-info"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:15px;font-weight:bold;color:var(--gold);margin-bottom:12px">📲 Install on Your Phone</div>
+      <div id="install-steps"></div>
+      <button class="share-btn" onclick="shareApp()">📤 Share with Others</button>
+    </div>
+
+    <div class="card">
+      <div style="font-size:15px;font-weight:bold;color:var(--gold);margin-bottom:10px">🔔 About Reminders</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7">
+        Adhan plays <strong style="color:var(--text)">30 minutes before</strong> each Jama'at time — only for prayers you've enabled. Tap the bell 🔔 on any prayer to toggle.
+        <br><br>
+        <strong style="color:var(--text)">London waqt times</strong> are live from the AlAdhan API. Your mosque's Jama'at times are from the official Al Noor Masjid 2026 calendar.
+        <br><br>
+        Prayer tracker data is saved privately on your device.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-btn active" id="nav-today" onclick="switchTab('today')">
+    <span class="nav-icon">🕌</span>
+    <span class="nav-label" style="color:var(--gold)">Today</span>
+  </button>
+  <button class="nav-btn" id="nav-timetable" onclick="switchTab('timetable')">
+    <span class="nav-icon">📅</span>
+    <span class="nav-label" style="color:var(--muted)">Timetable</span>
+  </button>
+  <button class="nav-btn" id="nav-tracker" onclick="switchTab('tracker')">
+    <span class="nav-dot" id="tracker-dot"></span>
+    <span class="nav-icon">✅</span>
+    <span class="nav-label" style="color:var(--muted)">Tracker</span>
+  </button>
+  <button class="nav-btn" id="nav-info" onclick="switchTab('info')">
+    <span class="nav-icon">ℹ️</span>
+    <span class="nav-label" style="color:var(--muted)">Masjid</span>
+  </button>
+</nav>
+
+<script>
+// ─── TIMETABLE DATA ───────────────────────────────────────────────────────────
+// [fajrBegins, fajrJamaat, sunrise, zuhrBegins, zuhrJamaat, asr1, asr2, asrJamaat, maghribBegins, maghribJamaat, ishaBegins, ishaJamaat]
+const TT = {
+  5:{
+    1:["3:52","4:45","5:30","1:03","1:30","5:01","6:05","6:45","8:25","8:30","9:38","10:00"],
+    2:["3:50","4:45","5:28","1:03","1:30","5:01","6:06","6:45","8:26","8:31","9:39","10:00"],
+    3:["3:47","4:30","5:26","1:03","1:30","5:02","6:07","7:00","8:28","8:33","9:41","10:15"],
+    4:["3:45","4:30","5:24","1:02","1:30","5:03","6:08","7:00","8:30","8:35","9:43","10:15"],
+    5:["3:42","4:30","5:22","1:02","1:30","5:03","6:09","7:00","8:31","8:36","9:44","10:15"],
+    6:["3:41","4:30","5:21","1:02","1:30","5:04","6:10","7:00","8:33","8:38","9:46","10:15"],
+    7:["3:38","4:30","5:19","1:02","1:30","5:05","6:11","7:00","8:35","8:40","9:48","10:15"],
+    8:["3:36","4:30","5:17","1:02","1:30","5:05","6:12","7:00","8:36","8:41","9:49","10:15"],
+    9:["3:34","4:30","5:16","1:02","1:30","5:06","6:13","7:00","8:38","8:43","9:51","10:15"],
+    10:["3:32","4:15","5:14","1:02","1:30","5:06","6:14","7:00","8:39","8:44","9:52","10:15"],
+    11:["3:29","4:15","5:12","1:02","1:30","5:07","6:15","7:00","8:41","8:46","9:54","10:15"],
+    12:["3:28","4:15","5:11","1:02","1:30","5:08","6:16","7:00","8:42","8:47","9:55","10:15"],
+    13:["3:25","4:15","5:09","1:02","1:30","5:08","6:16","7:00","8:44","8:49","9:56","10:15"],
+    14:["3:24","4:15","5:08","1:02","1:30","5:09","6:17","7:00","8:48","8:50","9:57","10:15"],
+    15:["3:21","4:15","5:06","1:02","1:30","5:10","6:18","7:00","8:47","8:52","9:59","10:15"],
+    16:["3:20","4:15","5:05","1:02","1:30","5:10","6:19","7:00","8:48","8:53","10:01","10:15"],
+    17:["3:17","4:15","5:03","1:02","1:30","5:11","6:20","7:00","8:50","8:55","10:03","10:30"],
+    18:["3:16","4:15","5:02","1:02","1:30","5:11","6:21","7:00","8:51","8:56","10:04","10:30"],
+    19:["3:13","4:15","5:00","1:02","1:30","5:12","6:22","7:00","8:53","8:58","10:07","10:30"],
+    20:["3:12","4:15","4:59","1:02","1:30","5:12","6:23","7:00","8:54","8:59","10:08","10:30"],
+    21:["3:10","4:15","4:58","1:02","1:30","5:13","6:23","7:00","8:56","9:01","10:10","10:30"],
+    22:["3:08","4:15","4:56","1:02","1:30","5:13","6:24","7:00","8:57","9:02","10:12","10:30"],
+    23:["3:06","4:15","4:55","1:02","1:30","5:14","6:25","7:00","8:58","9:03","10:13","10:30"],
+    24:["3:04","4:15","4:54","1:03","1:30","5:15","6:26","7:00","9:00","9:05","10:15","10:45"],
+    25:["3:02","4:15","4:53","1:03","1:30","5:15","6:26","7:00","9:01","9:06","10:17","10:45"],
+    26:["3:01","4:15","4:52","1:03","1:30","5:16","6:27","7:00","9:02","9:07","10:18","10:45"],
+    27:["2:59","4:15","4:51","1:03","1:30","5:16","6:28","7:00","9:04","9:09","10:20","10:45"],
+    28:["2:58","4:15","4:50","1:03","1:30","5:17","6:29","7:00","9:05","9:10","10:22","10:45"],
+    29:["2:56","4:15","4:49","1:03","1:30","5:17","6:29","7:00","9:06","9:11","10:23","10:45"],
+    30:["2:55","4:15","4:48","1:03","1:30","5:18","6:30","7:00","9:07","9:12","10:24","10:45"],
+    31:["2:53","4:15","4:47","1:03","1:30","5:18","6:31","7:00","9:08","9:13","10:26","10:45"],
+  },
+  6:{
+    1:["2:52","4:00","4:46","1:04","1:30","5:19","6:31","7:00","9:09","9:14","10:27","10:45"],
+    2:["2:51","4:00","4:46","1:04","1:30","5:19","6:32","7:00","9:10","9:15","10:29","10:45"],
+    3:["2:50","4:00","4:45","1:04","1:30","5:19","6:33","7:00","9:11","9:16","10:30","10:45"],
+    4:["2:48","4:00","4:44","1:04","1:30","5:20","6:33","7:00","9:12","9:17","10:31","10:45"],
+    5:["2:47","4:00","4:43","1:04","1:30","5:20","6:34","7:00","9:13","9:18","10:33","10:45"],
+    6:["2:46","4:00","4:43","1:04","1:30","5:21","6:34","7:00","9:14","9:19","10:34","10:45"],
+    7:["2:45","4:00","4:42","1:05","1:30","5:21","6:35","7:00","9:15","9:20","10:35","10:55"],
+    8:["2:44","4:00","4:42","1:05","1:30","5:22","6:36","7:00","9:16","9:21","10:36","10:55"],
+    9:["2:43","4:00","4:41","1:05","1:30","5:22","6:36","7:00","9:17","9:22","10:38","10:55"],
+    10:["2:42","4:00","4:41","1:05","1:30","5:22","6:37","7:00","9:18","9:23","10:39","10:55"],
+    11:["2:42","4:00","4:41","1:05","1:30","5:23","6:37","7:00","9:18","9:23","10:40","10:55"],
+    12:["2:40","4:00","4:40","1:06","1:30","5:23","6:37","7:00","9:19","9:24","10:41","10:55"],
+    13:["2:39","4:00","4:40","1:06","1:30","5:23","6:38","7:00","9:20","9:25","10:43","10:55"],
+    14:["2:39","4:00","4:40","1:06","1:30","5:24","6:38","7:00","9:20","9:26","10:43","10:55"],
+    15:["2:39","4:00","4:40","1:06","1:30","5:24","6:39","7:00","9:21","9:26","10:44","10:55"],
+    16:["2:39","4:00","4:40","1:06","1:30","5:24","6:39","7:00","9:21","9:26","10:43","10:55"],
+    17:["2:39","4:00","4:40","1:07","1:30","5:24","6:39","7:00","9:21","9:26","10:43","10:55"],
+    18:["2:39","4:00","4:40","1:07","1:30","5:25","6:40","7:00","9:22","9:27","10:43","10:55"],
+    19:["2:39","4:00","4:40","1:07","1:30","5:25","6:40","7:00","9:22","9:27","10:43","10:55"],
+    20:["2:40","4:00","4:40","1:07","1:30","5:25","6:40","7:00","9:22","9:27","10:43","10:55"],
+    21:["2:40","4:00","4:40","1:07","1:30","5:25","6:40","7:00","9:23","9:28","10:43","10:55"],
+    22:["2:40","4:00","4:40","1:08","1:30","5:26","6:41","7:00","9:23","9:28","10:42","10:55"],
+    23:["2:42","4:00","4:41","1:08","1:30","5:26","6:41","7:00","9:23","9:28","10:42","10:55"],
+    24:["2:42","4:00","4:41","1:08","1:30","5:26","6:41","7:00","9:23","9:28","10:41","10:55"],
+    25:["2:42","4:00","4:41","1:08","1:30","5:26","6:41","7:00","9:23","9:28","10:41","10:55"],
+    26:["2:44","4:00","4:42","1:09","1:30","5:26","6:41","7:00","9:23","9:28","10:40","10:55"],
+    27:["2:44","4:00","4:42","1:09","1:30","5:26","6:41","7:00","9:23","9:28","10:40","10:55"],
+    28:["2:46","4:00","4:43","1:09","1:30","5:26","6:41","7:15","9:23","9:28","10:40","10:45"],
+    29:["2:46","4:00","4:43","1:09","1:30","5:27","6:41","7:15","9:23","9:28","10:39","10:45"],
+    30:["2:47","4:00","4:44","1:09","1:30","5:27","6:41","7:15","9:22","9:27","10:37","10:45"],
+  },
+  7:{
+    1:["2:49","4:00","4:45","1:10","1:30","5:27","6:41","7:15","9:22","9:27","10:36","10:45"],
+    2:["2:50","4:00","4:45","1:10","1:30","5:27","6:41","7:15","9:22","9:27","10:36","10:45"],
+    3:["2:51","4:00","4:46","1:10","1:30","5:27","6:41","7:15","9:21","9:26","10:35","10:45"],
+    4:["2:53","4:00","4:47","1:10","1:30","5:27","6:41","7:15","9:21","9:26","10:34","10:45"],
+    5:["2:54","4:00","4:48","1:10","1:30","5:27","6:40","7:15","9:20","9:25","10:33","10:45"],
+    6:["2:55","4:00","4:49","1:10","1:30","5:27","6:40","7:15","9:20","9:25","10:33","10:45"],
+    7:["2:57","4:00","4:50","1:11","1:30","5:26","6:40","7:15","9:19","9:24","10:31","10:45"],
+    8:["2:58","4:00","4:51","1:11","1:30","5:26","6:40","7:15","9:19","9:24","10:31","10:45"],
+    9:["2:59","4:00","4:51","1:11","1:30","5:26","6:39","7:15","9:18","9:23","10:30","10:45"],
+    10:["3:00","4:00","4:52","1:11","1:30","5:26","6:39","7:15","9:18","9:23","10:30","10:45"],
+    11:["3:02","4:00","4:54","1:11","1:30","5:26","6:38","7:15","9:16","9:22","10:28","10:45"],
+    12:["3:04","4:15","4:55","1:11","1:30","5:26","6:38","7:15","9:15","9:20","10:26","10:40"],
+    13:["3:05","4:15","4:56","1:11","1:30","5:25","6:38","7:15","9:15","9:20","10:25","10:40"],
+    14:["3:07","4:15","4:57","1:12","1:30","5:25","6:37","7:15","9:14","9:19","10:24","10:40"],
+    15:["3:08","4:15","4:58","1:12","1:30","5:25","6:37","7:15","9:13","9:18","10:23","10:40"],
+    16:["3:09","4:15","4:59","1:12","1:30","5:25","6:36","7:15","9:12","9:17","10:21","10:40"],
+    17:["3:11","4:15","5:00","1:12","1:30","5:24","6:36","7:15","9:11","9:15","10:19","10:40"],
+    18:["3:13","4:15","5:02","1:12","1:30","5:24","6:35","7:15","9:09","9:14","10:18","10:40"],
+    19:["3:15","4:15","5:03","1:12","1:30","5:24","6:35","7:15","9:08","9:13","10:16","10:30"],
+    20:["3:16","4:15","5:04","1:12","1:30","5:23","6:34","7:15","9:07","9:12","10:15","10:30"],
+    21:["3:18","4:15","5:06","1:12","1:30","5:23","6:33","7:15","9:06","9:11","10:14","10:30"],
+    22:["3:20","4:15","5:07","1:12","1:30","5:22","6:33","7:15","9:05","9:10","10:12","10:30"],
+    23:["3:21","4:15","5:08","1:12","1:30","5:22","6:32","7:15","9:03","9:08","10:10","10:30"],
+    24:["3:24","4:15","5:10","1:12","1:30","5:21","6:31","7:15","9:02","9:07","10:09","10:30"],
+    25:["3:25","4:15","5:11","1:12","1:30","5:21","6:30","7:15","9:00","9:05","10:06","10:30"],
+    26:["3:27","4:15","5:12","1:12","1:30","5:20","6:30","7:15","8:59","9:04","10:05","10:15"],
+    27:["3:29","4:30","5:14","1:12","1:30","5:20","6:29","7:15","8:58","9:03","10:04","10:15"],
+    28:["3:31","4:30","5:15","1:12","1:30","5:19","6:28","7:15","8:56","9:01","10:01","10:15"],
+    29:["3:33","4:30","5:17","1:12","1:30","5:19","6:27","7:15","8:55","8:59","10:00","10:15"],
+    30:["3:35","4:30","5:18","1:12","1:30","5:18","6:26","7:15","8:53","8:58","9:58","10:15"],
+    31:["3:37","4:30","5:20","1:12","1:30","5:17","6:25","7:15","8:51","8:56","9:56","10:15"],
+  },
+  8:{
+    1:["3:39","4:30","5:21","1:12","1:30","5:17","6:24","7:15","8:50","8:55","9:56","10:15"],
+    2:["3:41","4:45","5:23","1:12","1:30","5:16","6:23","7:00","8:48","8:53","9:54","10:15"],
+    3:["3:43","4:45","5:24","1:12","1:30","5:15","6:22","7:00","8:46","8:51","9:52","10:15"],
+    4:["3:45","4:45","5:26","1:12","1:30","5:14","6:21","7:00","8:45","8:50","9:51","10:15"],
+    5:["3:47","4:45","5:27","1:12","1:30","5:14","6:20","7:00","8:43","8:48","9:49","10:15"],
+    6:["3:49","4:45","5:29","1:12","1:30","5:13","6:19","7:00","8:41","8:46","9:48","10:15"],
+    7:["3:50","4:45","5:30","1:11","1:30","5:12","6:17","7:00","8:39","8:44","9:46","10:15"],
+    8:["3:53","4:45","5:32","1:11","1:30","5:11","6:16","7:00","8:38","8:43","9:45","10:15"],
+    9:["3:55","4:45","5:34","1:11","1:30","5:10","6:15","6:45","8:36","8:41","9:43","10:00"],
+    10:["3:56","4:45","5:35","1:11","1:30","5:09","6:14","6:45","8:34","8:39","9:40","10:00"],
+    11:["3:59","4:45","5:37","1:11","1:30","5:08","6:13","6:45","8:32","8:37","9:40","10:00"],
+    12:["4:00","4:45","5:38","1:11","1:30","5:07","6:11","6:45","8:30","8:35","9:38","10:00"],
+    13:["4:02","4:45","5:40","1:10","1:30","5:06","6:10","6:45","8:28","8:33","9:36","10:00"],
+    14:["4:04","4:45","5:41","1:10","1:30","5:05","6:07","6:45","8:26","8:31","9:34","10:00"],
+    15:["4:06","4:45","5:43","1:10","1:30","5:04","6:07","6:45","8:24","8:29","9:34","10:00"],
+    16:["4:08","5:00","5:45","1:10","1:30","5:03","6:06","6:30","8:22","8:27","9:31","9:45"],
+    17:["4:10","5:00","5:46","1:10","1:30","5:02","6:04","6:30","8:20","8:25","9:29","9:45"],
+    18:["4:12","5:00","5:48","1:10","1:30","5:01","6:03","6:30","8:18","8:23","9:27","9:45"],
+    19:["4:13","5:00","5:49","1:09","1:30","5:00","6:02","6:30","8:16","8:21","9:25","9:45"],
+    20:["4:16","5:00","5:51","1:09","1:30","4:59","6:00","6:30","8:14","8:19","9:23","9:45"],
+    21:["4:18","5:00","5:53","1:09","1:30","4:58","5:59","6:30","8:12","8:17","9:22","9:45"],
+    22:["4:19","5:00","5:54","1:09","1:30","4:57","5:57","6:30","8:10","8:15","9:20","9:45"],
+    23:["4:22","5:15","5:56","1:08","1:30","4:55","5:55","6:15","8:08","8:13","9:18","9:30"],
+    24:["4:23","5:15","5:57","1:08","1:30","4:54","5:54","6:15","8:06","8:11","9:16","9:30"],
+    25:["4:25","5:15","5:59","1:08","1:30","4:53","5:52","6:15","8:04","8:09","9:15","9:30"],
+    26:["4:28","5:15","6:01","1:07","1:30","4:52","5:51","6:15","8:01","8:06","9:12","9:30"],
+    27:["4:29","5:15","6:02","1:07","1:30","4:50","5:49","6:15","7:59","8:04","9:10","9:30"],
+    28:["4:31","5:15","6:04","1:07","1:30","4:49","5:47","6:15","7:57","8:02","9:08","9:30"],
+    29:["4:33","5:15","6:05","1:07","1:30","4:48","5:46","6:15","7:55","8:00","9:07","9:30"],
+    30:["4:35","5:30","6:07","1:06","1:30","4:46","5:44","6:00","7:53","7:58","9:05","9:15"],
+    31:["4:36","5:30","6:08","1:06","1:30","4:45","5:42","6:00","7:50","7:55","9:02","9:15"],
+  },
+  9:{
+    1:["4:38","5:30","6:10","1:06","1:30","4:44","5:41","6:00","7:48","7:55","9:01","9:15"],
+    2:["4:40","5:30","6:12","1:05","1:30","4:42","5:37","6:00","7:46","7:53","8:59","9:15"],
+    3:["4:41","5:30","6:13","1:05","1:30","4:41","5:37","6:00","7:44","7:51","8:57","9:15"],
+    4:["4:43","5:30","6:15","1:05","1:30","4:39","5:35","6:00","7:41","7:48","8:55","9:15"],
+    5:["4:44","5:30","6:16","1:04","1:30","4:38","5:34","6:00","7:39","7:46","8:53","9:15"],
+    6:["4:46","5:45","6:18","1:04","1:30","4:37","5:32","5:45","7:37","7:44","8:51","9:00"],
+    7:["4:48","5:45","6:20","1:04","1:30","4:35","5:30","5:45","7:35","7:42","8:50","9:00"],
+    8:["4:49","5:45","6:21","1:03","1:30","4:34","5:28","5:45","7:32","7:39","8:47","9:00"],
+    9:["4:51","5:45","6:23","1:03","1:30","4:32","5:26","5:45","7:30","7:37","8:45","9:00"],
+    10:["4:52","5:45","6:24","1:03","1:30","4:31","5:25","5:45","7:28","7:35","8:43","9:00"],
+    11:["4:54","5:45","6:26","1:02","1:30","4:29","5:23","5:45","7:25","7:33","8:43","9:00"],
+    12:["4:56","5:45","6:28","1:02","1:30","4:28","5:21","5:45","7:23","7:30","8:39","9:00"],
+    13:["4:57","5:45","6:29","1:02","1:30","4:26","5:19","5:30","7:21","7:28","8:37","8:45"],
+    14:["4:59","5:45","6:31","1:01","1:30","4:24","5:17","5:30","7:19","7:26","8:35","8:45"],
+    15:["5:00","5:45","6:32","1:01","1:30","4:23","5:15","5:30","7:16","7:23","8:33","8:45"],
+    16:["5:03","5:45","6:34","1:01","1:30","4:21","5:15","5:30","7:14","7:21","8:31","8:45"],
+    17:["5:05","5:45","6:36","1:00","1:30","4:20","5:11","5:30","7:12","7:19","8:29","8:45"],
+    18:["5:06","5:45","6:37","1:00","1:30","4:18","5:09","5:30","7:09","7:16","8:26","8:45"],
+    19:["5:09","5:45","6:39","12:59","1:30","4:16","5:07","5:30","7:07","7:14","8:24","8:45"],
+    20:["5:10","6:00","6:40","12:59","1:30","4:15","5:06","5:15","7:05","7:12","8:22","8:30"],
+    21:["5:12","6:00","6:42","12:59","1:30","4:13","5:04","5:15","7:03","7:10","8:21","8:30"],
+    22:["5:15","6:00","6:44","12:58","1:30","4:12","5:02","5:15","7:00","7:07","8:18","8:30"],
+    23:["5:16","6:00","6:45","12:58","1:30","4:10","5:00","5:15","6:58","7:05","8:16","8:30"],
+    24:["5:18","6:00","6:47","12:58","1:30","4:08","4:58","5:15","6:56","7:03","8:14","8:30"],
+    25:["5:20","6:00","6:48","12:57","1:30","4:07","4:56","5:15","6:53","7:00","8:12","8:30"],
+    26:["5:22","6:00","6:50","12:57","1:30","4:05","4:54","5:15","6:51","6:58","8:10","8:30"],
+    27:["5:24","6:15","6:52","12:57","1:30","4:03","4:52","5:15","6:49","6:56","8:08","8:15"],
+    28:["5:26","6:15","6:53","12:56","1:30","4:02","4:50","5:15","6:46","6:53","8:05","8:15"],
+    29:["5:28","6:15","6:55","12:56","1:30","4:00","4:48","5:15","6:44","6:51","8:03","8:15"],
+    30:["5:29","6:15","6:56","12:56","1:30","3:58","4:46","5:15","6:42","6:49","8:01","8:15"],
+  },
+  10:{
+    1:["5:30","6:15","6:58","12:55","1:30","3:56","4:44","5:15","6:40","6:45","8:00","8:15"],
+    2:["5:32","6:15","7:00","12:55","1:30","3:55","4:42","5:15","6:38","6:43","7:57","8:15"],
+    3:["5:33","6:15","7:01","12:55","1:30","3:53","4:40","5:15","6:37","6:42","7:57","8:15"],
+    4:["5:35","6:15","7:03","12:54","1:30","3:51","4:38","4:45","6:35","6:40","7:56","8:15"],
+    5:["5:36","6:15","7:05","12:54","1:30","3:50","4:36","4:45","6:33","6:38","7:54","8:15"],
+    6:["5:37","6:15","7:06","12:54","1:30","3:48","4:34","4:45","6:31","6:36","7:52","8:15"],
+    7:["5:39","6:15","7:08","12:54","1:30","3:46","4:32","4:45","6:28","6:33","7:49","8:15"],
+    8:["5:40","6:15","7:10","12:53","1:30","3:46","4:30","4:45","6:26","6:31","7:49","8:15"],
+    9:["5:41","6:15","7:11","12:53","1:30","3:45","4:30","4:45","6:24","6:29","7:47","8:15"],
+    10:["5:43","6:15","7:13","12:53","1:30","3:41","4:26","4:45","6:22","6:27","7:45","8:15"],
+    11:["5:44","6:30","7:15","12:52","1:30","3:40","4:24","4:45","6:17","6:22","7:40","8:00"],
+    12:["5:45","6:30","7:16","12:52","1:30","3:38","4:22","4:45","6:15","6:20","7:38","8:00"],
+    13:["5:47","6:30","7:18","12:52","1:30","3:36","4:20","4:45","6:13","6:18","7:38","8:00"],
+    14:["5:48","6:30","7:20","12:52","1:30","3:35","4:18","4:45","6:11","6:16","7:36","8:00"],
+    15:["5:49","6:30","7:21","12:51","1:30","3:33","4:16","4:45","6:09","6:14","7:34","8:00"],
+    16:["5:51","6:30","7:23","12:51","1:30","3:31","4:16","4:45","6:09","6:11","7:34","8:00"],
+    17:["5:52","6:30","7:25","12:51","1:30","3:30","4:12","4:45","6:04","6:09","7:31","8:00"],
+    18:["5:54","6:45","7:27","12:51","1:30","3:28","4:10","4:30","6:02","6:07","7:29","7:45"],
+    19:["5:55","6:45","7:28","12:51","1:30","3:26","4:08","4:30","6:00","6:05","7:25","7:45"],
+    20:["5:57","6:45","7:30","12:50","1:30","3:25","4:07","4:30","5:58","6:03","7:23","7:45"],
+    21:["5:58","6:45","7:32","12:50","1:30","3:23","4:05","4:30","5:56","6:01","7:23","7:45"],
+    22:["5:58","6:45","7:32","12:50","1:30","3:23","4:05","4:30","5:56","6:01","7:23","7:45"],
+    23:["6:00","6:45","7:35","12:50","1:30","3:20","4:01","4:30","5:52","5:57","7:19","7:45"],
+    24:["6:02","6:45","7:37","12:50","1:30","3:18","3:59","4:30","5:50","5:55","7:17","7:45"],
+    25:["6:04","6:00","7:39","12:50","1:00","2:17","2:57","3:30","4:48","4:53","6:17","7:15"],
+    26:["5:04","6:00","6:40","11:50","1:00","2:15","2:55","3:30","4:46","4:50","6:15","7:15"],
+    27:["5:06","6:00","6:42","11:50","1:00","2:14","2:54","3:30","4:44","4:49","6:13","7:15"],
+    28:["5:08","6:00","6:44","11:49","1:00","2:12","2:52","3:30","4:42","4:47","6:11","7:15"],
+    29:["5:09","6:00","6:46","11:49","1:00","2:11","2:50","3:30","4:40","4:45","6:09","7:15"],
+    30:["5:10","6:00","6:47","11:49","1:00","2:09","2:48","3:30","4:38","4:43","6:07","7:15"],
+    31:["5:12","6:00","6:49","11:49","1:00","2:08","2:47","3:30","4:37","4:42","6:06","7:15"],
+  },
+  11:{
+    1:["5:14","6:15","6:51","11:49","1:00","2:06","2:45","3:15","4:35","4:40","6:05","7:15"],
+    2:["5:16","6:15","6:53","11:49","1:00","2:05","2:43","3:15","4:33","4:38","6:03","7:15"],
+    3:["5:18","6:15","6:55","11:49","1:00","2:04","2:42","3:15","4:32","4:36","6:02","7:15"],
+    4:["5:19","6:15","6:56","11:49","1:00","2:02","2:40","3:15","4:29","4:34","6:00","7:15"],
+    5:["5:20","6:15","6:58","11:49","1:00","2:01","2:38","3:15","4:28","4:33","6:00","7:15"],
+    6:["5:22","6:15","7:00","11:49","1:00","2:00","2:37","3:15","4:28","4:33","6:00","7:15"],
+    7:["5:23","6:15","7:02","11:49","1:00","1:58","2:35","3:15","4:26","4:31","5:58","7:15"],
+    8:["5:25","6:30","7:03","11:49","1:00","1:57","2:34","3:00","4:23","4:28","5:56","7:15"],
+    9:["5:26","6:30","7:05","11:49","1:00","1:56","2:32","3:00","4:21","4:26","5:55","7:15"],
+    10:["5:27","6:30","7:07","11:50","1:00","1:55","2:31","3:00","4:20","4:25","5:54","7:15"],
+    11:["5:29","6:30","7:09","11:50","1:00","1:53","2:29","3:00","4:18","4:23","5:52","7:15"],
+    12:["5:31","6:30","7:10","11:50","1:00","1:52","2:28","3:00","4:17","4:22","5:51","7:15"],
+    13:["5:31","6:30","7:12","11:50","1:00","1:51","2:27","3:00","4:15","4:20","5:50","7:15"],
+    14:["5:33","6:30","7:14","11:50","1:00","1:50","2:25","3:00","4:14","4:19","5:49","7:15"],
+    15:["5:35","6:45","7:15","11:50","1:00","1:49","2:24","2:45","4:12","4:17","5:47","7:15"],
+    16:["5:35","6:45","7:17","11:50","1:00","1:48","2:23","2:45","4:11","4:16","5:46","7:15"],
+    17:["5:37","6:45","7:19","11:51","1:00","1:47","2:22","2:45","4:10","4:15","5:46","7:15"],
+    18:["5:39","6:45","7:21","11:51","1:00","1:46","2:20","2:45","4:08","4:13","5:44","7:15"],
+    19:["5:40","6:45","7:22","11:51","1:00","1:45","2:19","2:45","4:07","4:12","5:43","7:15"],
+    20:["5:42","6:45","7:24","11:51","1:00","1:44","2:18","2:45","4:06","4:11","5:42","7:15"],
+    21:["5:44","6:45","7:26","11:51","1:00","1:43","2:16","2:45","4:04","4:09","5:41","7:15"],
+    22:["5:45","6:45","7:27","11:52","1:00","1:42","2:15","2:45","4:03","4:08","5:40","7:15"],
+    23:["5:47","6:45","7:29","11:52","1:00","1:41","2:14","2:45","4:02","4:07","5:39","7:15"],
+    24:["5:49","6:45","7:30","11:52","1:00","1:41","2:13","2:45","4:01","4:06","5:39","7:15"],
+    25:["5:50","6:45","7:32","11:53","1:00","1:40","2:12","2:45","4:00","4:05","5:38","7:15"],
+    26:["5:52","6:45","7:33","11:53","1:00","1:39","2:12","2:45","3:59","4:04","5:36","7:15"],
+    27:["5:53","6:45","7:35","11:53","1:00","1:39","2:12","2:45","3:58","4:03","5:36","7:15"],
+    28:["5:55","6:45","7:36","11:54","1:00","1:38","2:11","2:45","3:58","4:03","5:36","7:15"],
+    29:["5:56","6:45","7:38","11:54","1:00","1:38","2:10","2:45","3:57","4:02","5:36","7:15"],
+    30:["5:58","6:45","7:39","11:54","1:00","1:38","2:10","2:45","3:57","4:02","5:36","7:15"],
+  },
+  12:{
+    1:["5:59","6:45","7:41","11:55","1:00","1:37","2:09","2:45","3:56","4:01","5:35","7:15"],
+    2:["6:00","6:45","7:42","11:55","1:00","1:37","2:08","2:45","3:56","4:01","5:35","7:15"],
+    3:["6:02","6:45","7:44","11:55","1:00","1:37","2:08","2:45","3:55","4:00","5:34","7:15"],
+    4:["6:03","6:45","7:45","11:56","1:00","1:36","2:08","2:45","3:55","4:00","5:34","7:15"],
+    5:["6:04","6:45","7:46","11:56","1:00","1:36","2:07","2:45","3:54","3:59","5:33","7:15"],
+    6:["6:05","7:00","7:47","11:57","1:00","1:36","2:07","2:45","3:54","3:59","5:33","7:15"],
+    7:["6:07","7:00","7:49","11:57","1:00","1:36","2:07","2:45","3:53","3:58","5:32","7:15"],
+    8:["6:08","7:00","7:50","11:58","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    9:["6:09","7:00","7:51","11:58","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    10:["6:10","7:00","7:52","11:58","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    11:["6:11","7:00","7:53","11:59","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    12:["6:12","7:00","7:54","11:59","1:00","1:36","2:06","2:45","3:52","3:57","5:31","7:15"],
+    13:["6:13","7:00","7:55","12:00","1:00","1:36","2:06","2:45","3:52","3:57","5:31","7:15"],
+    14:["6:14","7:00","7:56","12:00","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    15:["6:15","7:00","7:57","12:01","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    16:["6:17","7:00","7:58","12:01","1:00","1:36","2:06","2:45","3:53","3:58","5:32","7:15"],
+    17:["6:17","7:00","7:58","12:02","1:00","1:37","2:07","2:45","3:53","3:58","5:32","7:15"],
+    18:["6:18","7:00","7:59","12:02","1:00","1:37","2:07","2:45","3:53","3:58","5:32","7:15"],
+    19:["6:19","7:00","8:00","12:03","1:00","1:37","2:07","2:45","3:54","3:59","5:33","7:15"],
+    20:["6:20","7:00","8:00","12:03","1:00","1:38","2:08","2:45","3:54","3:59","5:33","7:15"],
+    21:["6:21","7:00","8:01","12:04","1:00","1:38","2:08","2:45","3:55","4:00","5:34","7:15"],
+    22:["6:21","7:00","8:01","12:04","1:00","1:38","2:08","2:45","3:55","4:00","5:34","7:15"],
+    23:["6:22","7:00","8:02","12:05","1:00","1:39","2:09","2:45","3:56","4:01","5:35","7:15"],
+    24:["6:22","7:00","8:02","12:05","1:00","1:39","2:09","2:45","3:56","4:01","5:35","7:15"],
+    25:["6:22","7:00","8:02","12:06","1:00","1:40","2:10","2:45","3:57","4:02","5:36","7:15"],
+    26:["6:25","7:00","8:03","12:06","1:00","1:41","2:11","2:45","3:58","4:03","5:37","7:15"],
+    27:["6:25","7:00","8:03","12:07","1:00","1:42","2:12","2:45","3:58","4:03","5:37","7:15"],
+    28:["6:25","7:00","8:03","12:07","1:00","1:43","2:13","2:45","4:00","4:05","5:39","7:15"],
+    29:["6:26","7:00","8:03","12:07","1:00","1:44","2:14","2:45","4:01","4:06","5:40","7:15"],
+    30:["6:26","7:00","8:03","12:08","1:00","1:44","2:14","2:45","4:02","4:07","5:41","7:15"],
+    31:["6:26","7:00","8:03","12:09","1:00","1:45","2:15","2:45","4:02","4:07","5:41","7:15"],
+  }
+};
+
+const PRAYERS = [
+  {key:"fajr",    label:"Fajr",    arabic:"الفجر", icon:"🌙", bi:0, ji:1, nextBi:3},
+  {key:"zuhr",    label:"Zuhr",    arabic:"الظهر", icon:"☀️",  bi:3, ji:4, nextBi:5},
+  {key:"asr",     label:"Asr",     arabic:"العصر", icon:"🌤️",  bi:5, ji:7, nextBi:8},
+  {key:"maghrib", label:"Maghrib", arabic:"المغرب",icon:"🌅", bi:8, ji:9, nextBi:10},
+  {key:"isha",    label:"Isha",    arabic:"العشاء",icon:"🌠", bi:10,ji:11,nextBi:null},
+];
+const MONTHS = ["","January","February","March","April","May","June","July","August","September","October","November","December"];
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let reminders = ls('noor_reminders',{fajr:false,zuhr:false,asr:false,maghrib:false,isha:false});
+let tracker   = ls('noor_tracker',{});   // {YYYY-MM-DD:{fajr:bool,...}}
+let notifOk   = false;
+let londonTimes = null;
+let viewMonth = new Date().getMonth()+1;
+let currentTab = 'today';
+let tickTimer = null;
+let adhanTimers = [];
+let userId = ls('noor_uid', null);
+if(!userId){userId='u'+Date.now().toString(36);ss('noor_uid',userId);}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function t12(t, idx){
+  if(!t||t==='—')return'—';
+  const p=t.split(':').map(Number);
+  let h=p[0], m=p[1];
+  // If idx is provided and >= 3, it's a PM prayer time
+  if(idx !== undefined && idx >= 3 && h < 12) h += 12;
+  const ap=h>=12?'PM':'AM', hh=h%12||12;
+  return hh+':'+(m<10?'0':'')+m+' '+ap;
+}
+function toMins(t, prayerKey){
+  if(!t)return 0;
+  const p=t.split(':').map(Number);
+  let h=p[0], m=p[1];
+  // Prayer times are stored in 12-hour format without AM/PM.
+  // Rules based on Islamic prayer order for UK:
+  // Fajr: always AM (1–6 AM range) — h is already correct
+  // Sunrise: always AM — h is correct
+  // Zuhr: always PM after 12:00 — if h < 12, add 12 (e.g. 1:03 → 13:03)
+  // Asr: always PM — if h < 12, add 12 (e.g. 5:00 → 17:00)
+  // Maghrib: always PM — if h < 12, add 12 (e.g. 8:25 → 20:25)
+  // Isha: always PM — if h < 12, add 12 (e.g. 9:38 → 21:38), but 10:xx also PM
+  if(prayerKey==='zuhr' || prayerKey==='zuhrJamaat'){
+    if(h < 12) h += 12;
+  } else if(prayerKey==='asr'){
+    if(h < 12) h += 12;
+  } else if(prayerKey==='maghrib'){
+    if(h < 12) h += 12;
+  } else if(prayerKey==='isha'){
+    if(h < 12) h += 12;
+  }
+  return h*60+m;
+}
+// Convert a raw timetable time string to minutes, using index position to determine AM/PM
+// Indices: 0=fajrB,1=fajrJ,2=sunrise,3=zuhrB,4=zuhrJ,5=asr1,6=asr2,7=asrJ,8=maghribB,9=maghribJ,10=ishaB,11=ishaJ
+function idxToMins(t, idx){
+  if(!t)return 0;
+  const p=t.split(':').map(Number);
+  let h=p[0], m=p[1];
+  // Indices 3-11 are all afternoon/evening (PM), except they may show as e.g. 1:30, 5:00, 8:25, 9:38
+  // Indices 0,1,2 are Fajr/Sunrise = always AM as stored (e.g. 3:52, 4:45, 5:30)
+  if(idx >= 3 && h < 12) h += 12;
+  return h*60+m;
+}
+function dateKey(d=new Date()){
+  return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0');
+}
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);
+}
+function getTodayData(){
+  const n=new Date();
+  return TT[n.getMonth()+1]?.[n.getDate()]||null;
+}
+
+// ─── ADHAN ───────────────────────────────────────────────────────────────────
+const ADHAN_URL='https://cdn.aladhan.com/audio/adhans/a7.mp3'; // Mishary — melodic
+function playAdhan(){
+  const a=document.getElementById('adhan-audio');
+  a.src=ADHAN_URL; a.play().catch(()=>showToast('Tap again to play audio'));
+}
+function stopAdhan(){
+  const a=document.getElementById('adhan-audio');
+  a.pause(); a.currentTime=0;
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+async function requestNotif(){
+  if(!('Notification' in window)){showToast('Notifications not supported here');return;}
+  const p=await Notification.requestPermission();
+  if(p==='granted'){notifOk=true;document.getElementById('notif-banner').style.display='none';showToast('✓ Adhan reminders enabled!');}
+  else showToast('Enable notifications in browser settings');
+}
+function scheduleReminders(data){
+  adhanTimers.forEach(clearTimeout);adhanTimers=[];
+  if(!notifOk||!data)return;
+  const now=new Date(),nowM=now.getHours()*60+now.getMinutes();
+  PRAYERS.forEach(p=>{
+    if(!reminders[p.key])return;
+    const jamaatM=idxToMins(data[p.ji],p.ji);
+    const alertM=jamaatM-30;
+    const diff=(alertM-nowM)*60000;
+    if(diff>0){
+      adhanTimers.push(setTimeout(()=>{
+        new Notification(`${p.label} Jama'at in 30 minutes`,{
+          body:`Al Noor Masjid — Jama'at at ${t12(data[p.ji],p.ji)}`,icon:'https://cdn.aladhan.com/audio/adhans/a7.mp3'
+        });
+        playAdhan();
+      },diff));
+    }
+  });
+}
+
+// ─── LONDON LIVE TIMES ───────────────────────────────────────────────────────
+async function fetchLondon(){
+  try{
+    const n=new Date();
+    const url=`https://api.aladhan.com/v1/timingsByCity/${n.getDate()}-${n.getMonth()+1}-${n.getFullYear()}?city=London&country=UK&method=2`;
+    const r=await fetch(url);const j=await r.json();
+    if(j.code===200){londonTimes=j.data.timings;renderLondonStrip();}
+  }catch{}
+}
+function renderLondonStrip(){
+  const strip=document.getElementById('london-strip');
+  if(!londonTimes){strip.innerHTML='';return;}
+  const now=new Date(),nowM=now.getHours()*60+now.getMinutes();
+  const lp=[
+    {n:'Fajr',   s:londonTimes.Fajr,   e:londonTimes.Sunrise},
+    {n:'Zuhr',   s:londonTimes.Dhuhr,  e:londonTimes.Asr},
+    {n:'Asr',    s:londonTimes.Asr,    e:londonTimes.Maghrib},
+    {n:'Maghrib',s:londonTimes.Maghrib,e:londonTimes.Isha},
+    {n:'Isha',   s:londonTimes.Isha,   e:londonTimes.Midnight},
+  ];
+  strip.innerHTML=lp.map(p=>{
+    const sM=toMins(p.s),eM=toMins(p.e);
+    const active=nowM>=sM&&nowM<eM;
+    const rem=active?Math.max(0,eM-nowM):null;
+    return`<div class="london-cell${active?' lc-active':''}">
+      <div class="lc-name">${p.n}</div>
+      <div class="lc-time">${t12(p.s)}</div>
+      <div class="lc-ends">${rem!==null?'ends '+rem+'m':'ends '+t12(p.e)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── HERO CARD ────────────────────────────────────────────────────────────────
+function updateHero(){
+  const data=getTodayData(); if(!data)return;
+  const now=new Date(),nowM=now.getHours()*60+now.getMinutes();
+  let next=null;
+  for(const p of PRAYERS){
+    const jm=idxToMins(data[p.ji],p.ji);
+    if(jm>nowM){next={...p,jamaat:data[p.ji],begins:data[p.bi],minsUntil:jm-nowM,jamaatMins:jm};break;}
+  }
+  const heroName=document.getElementById('hero-name');
+  const heroJamaat=document.getElementById('hero-jamaat');
+  const heroBegins=document.getElementById('hero-begins');
+  const heroMins=document.getElementById('hero-mins');
+  const fill=document.getElementById('countdown-fill');
+  const prog=document.getElementById('prog-circle');
+  const waqtEnd=document.getElementById('hero-waqt-end');
+  const waqtRem=document.getElementById('hero-waqt-rem');
+
+  if(!next){
+    heroName.innerHTML='All done 🌙';heroJamaat.textContent='';
+    heroBegins.textContent='See you tomorrow';heroMins.textContent='✓';
+    fill.style.width='100%';waqtEnd.textContent='—';waqtRem.textContent='—';
+    return;
+  }
+  heroName.innerHTML=`${next.icon} ${next.label} <span class="hero-arabic">${next.arabic}</span>`;
+  heroJamaat.textContent=`Jama'at ${t12(next.jamaat,next.ji)}`;
+  heroBegins.textContent=`Begins: ${t12(next.begins,next.bi)}`;
+  heroMins.textContent=next.minsUntil;
+
+  // progress ring — full circle = 176 units, map 0–60 mins
+  const pct=Math.max(0,Math.min(1,(60-next.minsUntil)/60));
+  prog.style.strokeDashoffset=176*(1-pct);
+  fill.style.width=((1-next.minsUntil/Math.max(60,next.minsUntil+1))*100)+'%';
+
+  // waqt end = next prayer begins
+  if(next.nextBi!==null){
+    const endT=data[next.nextBi];
+    const endM=idxToMins(endT,next.nextBi);
+    const remM=endM-nowM;
+    waqtEnd.textContent=t12(endT,next.nextBi);
+    waqtRem.textContent=remM>0?`${Math.floor(remM/60)}h ${remM%60}m left`:'ended';
+  } else {
+    waqtEnd.textContent='End of night';waqtRem.textContent='';
+  }
+}
+
+// ─── PRAYER LIST ──────────────────────────────────────────────────────────────
+function renderPrayerList(){
+  const data=getTodayData();
+  const list=document.getElementById('prayer-list');
+  if(!data){list.innerHTML='<div style="color:var(--muted);text-align:center;padding:40px">No data for today</div>';return;}
+  const now=new Date(),nowM=now.getHours()*60+now.getMinutes();
+  list.innerHTML=PRAYERS.map(p=>{
+    const jm=idxToMins(data[p.ji],p.ji);
+    const isNext=PRAYERS.find(x=>idxToMins(data[x.ji],x.ji)>nowM)?.key===p.key;
+    const isDone=jm<nowM;
+    const remOn=reminders[p.key];
+    return`<div class="prayer-row ${isNext?'p-active':''} ${isDone?'p-done':''}">
+      <div class="prayer-icon">${p.icon}</div>
+      <div class="prayer-info">
+        <div class="prayer-name">${p.label}<span>${p.arabic}</span></div>
+        <div class="prayer-sub">Begins ${t12(data[p.bi],p.bi)}${p.key==='asr'?` · 2nd ${t12(data[6],6)}`:''}${isDone?' · Completed ✓':''}</div>
+      </div>
+      <div class="prayer-times">
+        <div class="prayer-jamaat">${t12(data[p.ji],p.ji)}</div>
+        <div class="prayer-begins">Jama'at</div>
+      </div>
+      <button class="bell-btn ${remOn?'on':''}" onclick="toggleReminder('${p.key}')" title="${remOn?'Disable':'Enable'} reminder">
+        ${remOn?'🔔':'🔕'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function toggleReminder(key){
+  if(!notifOk){showToast('Enable notifications first 👆');return;}
+  reminders[key]=!reminders[key];ss('noor_reminders',reminders);
+  renderPrayerList();
+  const data=getTodayData();scheduleReminders(data);
+  showToast(reminders[key]?`🔔 Adhan reminder on for ${key}`:`🔕 Reminder off for ${key}`);
+}
+
+// ─── TIMETABLE ────────────────────────────────────────────────────────────────
+function changeMonth(d){
+  viewMonth=Math.min(12,Math.max(5,viewMonth+d));
+  renderTimetable();
+}
+function renderTimetable(){
+  document.getElementById('month-title').textContent=`${MONTHS[viewMonth]} 2026`;
+  const now=new Date();
+  const body=document.getElementById('tt-body');
+  const md=TT[viewMonth]||{};
+  const days=Object.keys(md).map(Number).sort((a,b)=>a-b);
+  body.innerHTML=days.map(day=>{
+    const d=md[day],wd=new Date(2026,viewMonth-1,day).getDay();
+    const isT=viewMonth===now.getMonth()+1&&day===now.getDate();
+    const isSun=wd===0;
+    return`<div class="tt-row ${isT?'tt-today':''} ${isSun&&!isT?'tt-sun':''}">
+      <div class="tt-day">${day}</div>
+      ${[1,4,7,9,11].map(i=>`<div class="tt-cell">${d[i]||'—'}</div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ─── TRACKER ─────────────────────────────────────────────────────────────────
+function todayTracked(){return tracker[dateKey()]||{};}
+function markPrayer(key){
+  const dk=dateKey();
+  if(!tracker[dk])tracker[dk]={};
+  tracker[dk][key]=!tracker[dk][key];
+  ss('noor_tracker',tracker);
+  renderTracker();
+  showToast(tracker[dk][key]?`✅ ${key} marked as prayed`:`${key} unmarked`);
+}
+function renderTracker(){
+  const data=getTodayData();
+  const today=new Date(),dk=dateKey();
+  // Week row
+  const weekEl=document.getElementById('tracker-week');
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let weekHtml='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const ddk=dateKey(d);const td=tracker[ddk]||{};
+    const cnt=Object.values(td).filter(Boolean).length;
+    const isToday=i===0;
+    weekHtml+=`<div class="week-day">
+      <div class="wd-label">${days[d.getDay()]}</div>
+      <div class="wd-circle ${isToday?'wd-today':''} ${cnt===5?'wd-full':''}">
+        ${d.getDate()}
+        ${cnt>0&&cnt<5?'<div class="wd-dot"></div>':''}
+      </div>
+    </div>`;
+  }
+  weekEl.innerHTML=weekHtml;
+
+  // Prayer rows
+  const todayData=getTodayData();
+  const pEl=document.getElementById('tracker-prayers');
+  const td2=tracker[dk]||{};
+  pEl.innerHTML=PRAYERS.map(p=>{
+    const done=!!td2[p.key];
+    return`<div class="tp-row ${done?'tp-done':''}" onclick="markPrayer('${p.key}')">
+      <div class="tp-icon">${p.icon}</div>
+      <div class="tp-info">
+        <div class="tp-name">${p.label} · ${p.arabic}</div>
+        <div class="tp-time">${todayData?`Jama'at ${t12(todayData[p.ji])}`:'—'}</div>
+      </div>
+      <div class="tp-check">${done?'✓':''}</div>
+    </div>`;
+  }).join('');
+
+  // Stats
+  const todayCnt=Object.values(td2).filter(Boolean).length;
+  document.getElementById('streak-today').textContent=`${todayCnt}/5`;
+  document.getElementById('tracker-score').textContent=`${todayCnt}/5 today`;
+
+  // Week total
+  let weekTotal=0;
+  for(let i=0;i<7;i++){
+    const d2=new Date(today);d2.setDate(today.getDate()-i);
+    const t2=tracker[dateKey(d2)]||{};
+    weekTotal+=Object.values(t2).filter(Boolean).length;
+  }
+  document.getElementById('streak-week').textContent=weekTotal;
+
+  // Streak
+  let streak=0;
+  for(let i=0;i<365;i++){
+    const d2=new Date(today);d2.setDate(today.getDate()-i);
+    const t2=tracker[dateKey(d2)]||{};
+    if(Object.values(t2).filter(Boolean).length===5)streak++;
+    else if(i>0)break;
+  }
+  document.getElementById('streak-streak').textContent=streak+'🔥';
+
+  // dot on nav
+  document.getElementById('tracker-dot').classList.toggle('show',todayCnt<5);
+}
+
+// ─── INFO TAB ─────────────────────────────────────────────────────────────────
+function renderInfo(){
+  const info=[
+    ['📍 Address','Billet Road, Romford, RM6 5PT'],
+    ['📞 Phone','07852210158'],
+    ['🌐 Website','www.alnoormasjid.co.uk'],
+    ['✉️ Email','Alnoormasjid23@gmail.com'],
+    ['🏛 Charity No','1205066'],
+    ['🏦 Bank Account','Acc: 22286863  ·  Sort Code: 30-99-50'],
+  ];
+  document.getElementById('masjid-info').innerHTML=info.map(([l,v])=>
+    `<div class="info-row"><div class="info-label">${l}</div><div class="info-val">${v}</div></div>`
+  ).join('');
+
+  const isIOS=/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+  const isAndroid=/android/.test(navigator.userAgent.toLowerCase());
+  let steps=[];
+  if(isIOS){
+    steps=[
+      ['1','Open this page in <strong>Safari</strong> (not Chrome)'],
+      ['2','Tap the <strong>Share button</strong> (📤 at the bottom of Safari)'],
+      ['3','Scroll down and tap <strong>"Add to Home Screen"</strong>'],
+      ['4','Tap <strong>"Add"</strong> — app icon appears on your home screen!'],
+    ];
+  } else if(isAndroid){
+    steps=[
+      ['1','Tap the <strong>3-dot menu</strong> (⋮) in your browser'],
+      ['2','Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>'],
+      ['3','Tap <strong>Add / Install</strong> to confirm'],
+      ['4','App icon appears on your home screen!'],
+    ];
+  } else {
+    steps=[
+      ['iPhone','Safari → Share 📤 → Add to Home Screen'],
+      ['Android','Browser menu ⋮ → Add to Home Screen → Install'],
+      ['Share','Copy the URL and send it via WhatsApp, SMS, or email'],
+    ];
+  }
+  document.getElementById('install-steps').innerHTML=steps.map(([n,t])=>
+    `<div class="install-step"><div class="install-num">${n}</div><div class="install-text">${t}</div></div>`
+  ).join('');
+}
+
+async function shareApp(){
+  const url=window.location.href;
+  const msg=`🕌 Al Noor Masjid Prayer Times App\nJama'at times, Adhan reminders & prayer tracker for Romford.\n\n${url}`;
+  if(navigator.share){
+    try{await navigator.share({title:'Al Noor Masjid Prayer Times',text:msg,url});}
+    catch{}
+  } else {
+    await navigator.clipboard.writeText(url).catch(()=>{});
+    showToast('Link copied to clipboard!');
+  }
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  const nb=document.getElementById('nav-'+tab);
+  nb.classList.add('active');
+  nb.querySelector('.nav-label').style.color='var(--gold)';
+  document.querySelectorAll('.nav-btn:not(.active) .nav-label').forEach(l=>l.style.color='var(--muted)');
+  currentTab=tab;
+  if(tab==='timetable')renderTimetable();
+  if(tab==='tracker')renderTracker();
+  if(tab==='info')renderInfo();
+  document.getElementById('app').scrollTop=0;
+}
+
+// ─── HEADER DATE ─────────────────────────────────────────────────────────────
+function updateHeader(){
+  const n=new Date();
+  document.getElementById('hdr-date').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  if(londonTimes){
+    // try to get Hijri from AlAdhan response cached data
+    const hijriEl=document.getElementById('hdr-hijri');
+    if(hijriEl&&!hijriEl.dataset.set) fetchHijri(n,hijriEl);
+  }
+}
+async function fetchHijri(n,el){
+  try{
+    const r=await fetch(`https://api.aladhan.com/v1/gToH?date=${n.getDate()}-${n.getMonth()+1}-${n.getFullYear()}`);
+    const j=await r.json();
+    if(j.code===200){
+      const h=j.data.hijri;
+      el.textContent=`${h.day} ${h.month.en} ${h.year} AH`;
+      el.dataset.set='1';
+    }
+  }catch{}
+}
+
+// ─── TICK ────────────────────────────────────────────────────────────────────
+function tick(){
+  updateHero();
+  if(londonTimes)renderLondonStrip();
+}
+
+// ─── NOTIFICATION CHECK ───────────────────────────────────────────────────────
+function checkNotifStatus(){
+  if('Notification' in window && Notification.permission==='granted'){
+    notifOk=true;
+    document.getElementById('notif-banner').style.display='none';
+    const data=getTodayData();scheduleReminders(data);
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(async function init(){
+  updateHeader();
+  checkNotifStatus();
+  const data=getTodayData();
+  updateHero();
+  renderPrayerList();
+  renderTracker();
+  renderInfo();
+  viewMonth=new Date().getMonth()+1;
+  if(viewMonth<5)viewMonth=5;
+  renderTimetable();
+  // Fetch London times
+  await fetchLondon();
+  updateHeader();
+  // Tick every 30 seconds
+  tickTimer=setInterval(tick,30000);
+  // Reschedule reminders after fetch
+  if(notifOk)scheduleReminders(data);
+})();
+</script>
+</body>
+</html>
