@@ -920,56 +920,62 @@ function renderPrayerList(){
 }
 
 function testAlert(){
-  // Unlock audio first
-  try { getAudioCtx(); } catch(e) {}
-
-  // Play adhan sound
-  try { playAdhanSound(); } catch(e) { showToast('Audio failed — try again'); return; }
-
-  // Fire a test notification
-  if(!('Notification' in window)){
-    showToast('🔊 Adhan playing! (Notifications not supported on this browser)');
+  // iOS REQUIRES AudioContext to be created/resumed synchronously inside a user gesture.
+  // So we do it right here, directly in the tap handler — no async, no delay.
+  try {
+    // Close any old context so iOS doesn't block us
+    if (audioCtx) { try { audioCtx.close(); } catch(e){} }
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // iOS may still start it suspended — resume it immediately
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    playAdhanSound();
+    showToast('🔊 Adhan playing…');
+  } catch(e) {
+    showToast('❌ Audio failed: ' + e.message);
     return;
   }
-  if(Notification.permission === 'granted'){
+
+  // Notifications — iOS Safari/PWA has very limited support, try anyway
+  if (!('Notification' in window)) {
+    // No notification API at all (older iOS)
+    return;
+  }
+  if (Notification.permission === 'granted') {
     try {
       new Notification("🕌 Test — Jama'at in 30 minutes", {
-        body: "This is how your real alert will look. Al Noor Masjid, Romford.",
+        body: "Al Noor Masjid, Romford — this is how real alerts look.",
         icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
-        tag: 'noor-test',
-        requireInteraction: false
+        tag: 'noor-test'
       });
-      showToast('✅ Test sent! Check your notification & listen for adhan');
-    } catch(e) {
-      showToast('🔊 Adhan playing! Notification failed — check browser settings');
-    }
-  } else if(Notification.permission === 'denied'){
-    showToast('🔊 Adhan playing! ⚠️ Notifications blocked — allow in settings');
-  } else {
-    // Ask for permission then fire
+      showToast('🔊 Adhan playing + notification sent!');
+    } catch(e) {}
+  } else if (Notification.permission !== 'denied') {
     Notification.requestPermission().then(p => {
       notifOk = p === 'granted';
       updateNotifBanners();
-      if(p === 'granted'){
-        new Notification("🕌 Test — Jama'at in 30 minutes", {
-          body: "This is how your real alert will look. Al Noor Masjid, Romford.",
-          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
-          tag: 'noor-test'
-        });
-        showToast('✅ Notifications enabled! Test alert sent');
-      } else {
-        showToast('🔊 Adhan playing! Enable notifications for popup alerts');
+      if (p === 'granted') {
+        try {
+          new Notification("🕌 Test — Jama'at in 30 minutes", {
+            body: "Al Noor Masjid, Romford — this is how real alerts look.",
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
+            tag: 'noor-test'
+          });
+        } catch(e) {}
       }
     });
   }
 }
 
 function toggleReminder(key){
-  // Unlock audio context on user gesture (required by browsers)
-  try { getAudioCtx(); } catch(e) {}
+  // Unlock audio context on iOS — must happen synchronously inside user tap
+  try {
+    if (!audioCtx || audioCtx.state === 'closed') {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e) {}
 
   if(!notifOk){
-    // Still allow sound-only reminders without notifications
     showToast('Tip: Tap the banner above to also get notification popups');
   }
   reminders[key]=!reminders[key];
