@@ -9,7 +9,6 @@
 <meta name="theme-color" content="#0a1628"/>
 <title>Al Noor Masjid – Prayer Times</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d6efd">
 <style>
   :root {
     --gold:#d4af37; --gold2:#f0d060; --green:#1a4a2e; --green2:#0d2820;
@@ -21,52 +20,28 @@
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Georgia',serif}
   body{display:flex;flex-direction:column}
-
-  /* SCROLLABLE CONTENT */
   #app{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(72px + var(--safe-bottom));padding-top:calc(var(--safe-top))}
   #app::-webkit-scrollbar{display:none}
-
-  /* BACKGROUND */
-  .bg-layer{position:fixed;inset:0;z-index:-1;
-    background:linear-gradient(160deg,#0a1628 0%,#0d2137 50%,#091a14 100%)}
-  .bg-pattern{position:fixed;inset:0;z-index:-1;opacity:0.035;
-    background-image:repeating-linear-gradient(45deg,#d4af37 0,#d4af37 1px,transparent 0,transparent 50%);
-    background-size:30px 30px}
-
-  /* HEADER */
+  .bg-layer{position:fixed;inset:0;z-index:-1;background:linear-gradient(160deg,#0a1628 0%,#0d2137 50%,#091a14 100%)}
+  .bg-pattern{position:fixed;inset:0;z-index:-1;opacity:0.035;background-image:repeating-linear-gradient(45deg,#d4af37 0,#d4af37 1px,transparent 0,transparent 50%);background-size:30px 30px}
   .header{text-align:center;padding:20px 16px 12px;padding-top:calc(20px + var(--safe-top))}
   .header-mosque{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:3px}
   .header-title{font-size:24px;font-weight:bold;color:#fff;line-height:1.2}
   .header-subtitle{font-size:12px;color:var(--muted);margin-top:3px}
   .header-hijri{font-size:11px;color:var(--gold);margin-top:2px;opacity:0.8}
-
-  /* BOTTOM NAV */
-  .nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
-    background:rgba(8,18,30,0.97);backdrop-filter:blur(24px);
-    border-top:1px solid rgba(212,175,55,0.2);
-    display:flex;justify-content:space-around;
-    padding:10px 0;padding-bottom:calc(10px + var(--safe-bottom))}
-  .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;
-    align-items:center;gap:3px;padding:4px 16px;position:relative}
+  .nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,18,30,0.97);backdrop-filter:blur(24px);border-top:1px solid rgba(212,175,55,0.2);display:flex;justify-content:space-around;padding:10px 0;padding-bottom:calc(10px + var(--safe-bottom))}
+  .nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;position:relative}
   .nav-btn .nav-icon{font-size:22px;transition:transform 0.2s}
   .nav-btn .nav-label{font-size:10px;letter-spacing:0.5px;transition:color 0.2s}
   .nav-btn.active .nav-label{color:var(--gold)}
   .nav-btn.active .nav-icon{transform:scale(1.1)}
-  .nav-dot{position:absolute;top:2px;right:10px;width:7px;height:7px;
-    background:var(--gold);border-radius:50%;display:none}
+  .nav-dot{position:absolute;top:2px;right:10px;width:7px;height:7px;background:var(--gold);border-radius:50%;display:none}
   .nav-dot.show{display:block}
-
-  /* TAB PAGES */
   .tab{display:none;padding:0 14px 8px;animation:fadeIn 0.25s ease}
   .tab.active{display:block}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-  /* CARDS */
   .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px}
   .card-gold{background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(0,80,40,0.15));border-color:rgba(212,175,55,0.35);box-shadow:0 6px 30px rgba(212,175,55,0.1)}
-  .card-active{background:linear-gradient(135deg,rgba(212,175,55,0.18),rgba(0,90,50,0.25));border-color:rgba(212,175,55,0.5)}
-
-  /* NEXT PRAYER HERO */
   .hero{position:relative;overflow:hidden}
   .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 50%,rgba(212,175,55,0.08),transparent 60%)}
   .hero-label{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
@@ -80,17 +55,11 @@
   .hero-timer-sub{font-size:11px;color:var(--muted)}
   .countdown-bar{height:3px;background:rgba(212,175,55,0.15);border-radius:99px;margin-top:14px;overflow:hidden}
   .countdown-fill{height:100%;background:linear-gradient(90deg,var(--gold),#90ee90);border-radius:99px;transition:width 1s linear}
-
-  /* WAQT END STRIP */
-  .waqt-strip{display:flex;align-items:center;justify-content:space-between;
-    background:rgba(0,0,0,0.25);border-radius:10px;padding:8px 12px;margin-top:10px}
+  .waqt-strip{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.25);border-radius:10px;padding:8px 12px;margin-top:10px}
   .waqt-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
   .waqt-val{font-size:13px;color:#e8c060;font-weight:bold}
   .waqt-remaining{font-size:11px;color:var(--muted)}
-
-  /* PRAYER LIST */
-  .prayer-row{display:flex;align-items:center;gap:10px;padding:12px 14px;
-    border-radius:14px;margin-bottom:8px;border:1px solid transparent;transition:all 0.2s}
+  .prayer-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;margin-bottom:8px;border:1px solid transparent;transition:all 0.2s}
   .prayer-row.p-active{background:linear-gradient(90deg,rgba(212,175,55,0.12),rgba(0,80,40,0.1));border-color:rgba(212,175,55,0.3)}
   .prayer-row.p-done{opacity:0.5}
   .prayer-icon{font-size:22px;width:34px;text-align:center;flex-shrink:0}
@@ -101,36 +70,25 @@
   .prayer-times{text-align:right;margin-right:8px}
   .prayer-jamaat{font-size:15px;font-weight:bold;color:var(--gold)}
   .prayer-begins{font-size:10px;color:var(--muted)}
-  .bell-btn{width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;font-size:16px;
-    background:rgba(212,175,55,0.12);transition:all 0.2s;flex-shrink:0}
+  .bell-btn{width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(212,175,55,0.12);transition:all 0.2s;flex-shrink:0}
   .bell-btn.on{background:var(--gold);box-shadow:0 2px 10px rgba(212,175,55,0.4)}
-
-  /* LONDON WAQT STRIP (corner widget) */
   .london-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:12px}
-  .london-cell{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;
-    padding:6px 4px;text-align:center}
+  .london-cell{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:6px 4px;text-align:center}
   .london-cell.lc-active{border-color:rgba(212,175,55,0.4);background:rgba(212,175,55,0.08)}
   .lc-name{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
   .lc-time{font-size:12px;color:var(--text);font-weight:bold;margin:2px 0}
   .lc-ends{font-size:9px;color:#e8c060}
-
-  /* TIMETABLE */
   .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px}
-  .month-btn{background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.25);
-    border-radius:10px;width:36px;height:36px;color:var(--gold);font-size:18px;cursor:pointer}
+  .month-btn{background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.25);border-radius:10px;width:36px;height:36px;color:var(--gold);font-size:18px;cursor:pointer}
   .month-title{font-size:17px;font-weight:bold;color:#fff}
   .tt-header{display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 1fr;gap:2px;margin-bottom:6px}
   .tt-hcell{font-size:9px;color:var(--gold);text-align:center;font-weight:bold;letter-spacing:0.5px;padding:2px}
-  .tt-row{display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 1fr;gap:2px;
-    padding:5px 4px;border-radius:10px;margin-bottom:2px;border:1px solid transparent}
+  .tt-row{display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 1fr;gap:2px;padding:5px 4px;border-radius:10px;margin-bottom:2px;border:1px solid transparent}
   .tt-row.tt-today{background:linear-gradient(90deg,rgba(212,175,55,0.15),rgba(0,70,40,0.1));border-color:rgba(212,175,55,0.35)}
   .tt-row.tt-sun{background:rgba(212,175,55,0.04)}
   .tt-cell{font-size:11px;color:#c0b090;text-align:center;padding:1px}
   .tt-day{font-size:11px;text-align:center;color:var(--muted);font-weight:bold}
   .tt-row.tt-today .tt-day{color:var(--gold)}
-
-  /* TRACKER */
   .tracker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
   .tracker-title{font-size:18px;font-weight:bold;color:#fff}
   .tracker-score{font-size:13px;color:var(--gold)}
@@ -138,92 +96,64 @@
   .tracker-week::-webkit-scrollbar{display:none}
   .week-day{flex-shrink:0;text-align:center;cursor:pointer}
   .wd-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
-  .wd-circle{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.05);
-    border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;
-    font-size:11px;color:var(--muted);margin:0 auto;position:relative;transition:all 0.2s}
+  .wd-circle{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);margin:0 auto;position:relative;transition:all 0.2s}
   .wd-circle.wd-today{border-color:var(--gold);color:var(--gold)}
   .wd-circle.wd-full{background:var(--gold);border-color:var(--gold);color:#0a1628}
-  .wd-dot{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
-    width:4px;height:4px;border-radius:50%;background:var(--gold)}
-
+  .wd-dot{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold)}
   .tracker-prayers{display:flex;flex-direction:column;gap:8px}
-  .tp-row{display:flex;align-items:center;gap:12px;padding:12px 16px;
-    background:var(--card);border:1px solid var(--border);border-radius:14px;
-    cursor:pointer;transition:all 0.2s;user-select:none}
+  .tp-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all 0.2s;user-select:none}
   .tp-row:active{transform:scale(0.98)}
-  .tp-row.tp-done{background:linear-gradient(90deg,rgba(0,120,60,0.15),rgba(0,80,40,0.1));
-    border-color:rgba(0,200,100,0.25)}
+  .tp-row.tp-done{background:linear-gradient(90deg,rgba(0,120,60,0.15),rgba(0,80,40,0.1));border-color:rgba(0,200,100,0.25)}
   .tp-icon{font-size:22px;width:32px;text-align:center}
   .tp-info{flex:1}
   .tp-name{font-size:15px;font-weight:bold;color:#fff}
   .tp-time{font-size:11px;color:var(--muted);margin-top:1px}
-  .tp-check{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);
-    display:flex;align-items:center;justify-content:center;font-size:14px;
-    transition:all 0.25s;background:transparent}
+  .tp-check{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.25s;background:transparent}
   .tp-row.tp-done .tp-check{background:#22c55e;border-color:#22c55e;box-shadow:0 0 12px rgba(34,197,94,0.4)}
-
   .streak-card{margin-top:16px}
   .streak-row{display:flex;align-items:center;justify-content:space-around;padding:4px}
   .streak-item{text-align:center}
   .streak-num{font-size:26px;font-weight:bold;color:var(--gold)}
   .streak-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
-
-  /* INFO */
   .info-row{margin-bottom:12px}
   .info-label{font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
   .info-val{font-size:14px;color:var(--text)}
-
-  /* TOAST */
-  .toast{position:fixed;top:calc(20px + var(--safe-top));left:50%;transform:translateX(-50%) translateY(-80px);
-    background:rgba(20,50,35,0.97);border:1px solid rgba(212,175,55,0.4);border-radius:14px;
-    padding:10px 20px;font-size:13px;color:var(--text);z-index:9999;
-    box-shadow:0 8px 30px rgba(0,0,0,0.5);white-space:nowrap;
-    transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+  .toast{position:fixed;top:calc(20px + var(--safe-top));left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(20,50,35,0.97);border:1px solid rgba(212,175,55,0.4);border-radius:14px;padding:10px 20px;font-size:13px;color:var(--text);z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.5);white-space:nowrap;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
   .toast.show{transform:translateX(-50%) translateY(0)}
 
-  /* NOTIF BANNER */
-  .notif-banner{display:flex;align-items:center;gap:10px;
-    background:rgba(212,175,55,0.08);border:1px dashed rgba(212,175,55,0.35);
-    border-radius:14px;padding:12px 16px;margin-bottom:12px;cursor:pointer;
-    font-size:13px;color:var(--gold)}
+  /* NOTIFICATION BANNER */
+  .notif-banner{display:flex;align-items:center;gap:10px;background:rgba(212,175,55,0.08);border:1px dashed rgba(212,175,55,0.35);border-radius:14px;padding:12px 16px;margin-bottom:12px;cursor:pointer;font-size:13px;color:var(--gold)}
   .notif-banner span{flex:1}
 
-  /* ADHAN PLAYER */
-  .adhan-player{display:flex;align-items:center;gap:10px;
-    background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 14px;margin-top:10px}
+  /* ADHAN TEST PLAYER */
+  .adhan-player{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 14px;margin-top:10px}
   .adhan-label{font-size:11px;color:var(--muted);flex:1}
-  .adhan-btn{background:var(--gold);border:none;border-radius:8px;width:32px;height:32px;
-    font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .adhan-btn{background:var(--gold);border:none;border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-  /* PROGRESS RING */
+  /* NOTIFICATION STATUS */
+  .notif-status{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:12px}
+  .notif-status.ok{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+  .notif-status.warn{background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:var(--gold)}
+
+  /* PROG RING */
   .prog-ring{width:64px;height:64px;flex-shrink:0}
   .prog-ring circle{fill:none;stroke-width:4}
   .prog-bg{stroke:rgba(212,175,55,0.15)}
   .prog-fill{stroke:var(--gold);stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s linear}
-
-  /* INSTALL GUIDE */
-  .install-step{display:flex;align-items:flex-start;gap:12px;padding:12px;
-    background:var(--card);border-radius:12px;margin-bottom:8px}
-  .install-num{width:26px;height:26px;border-radius:50%;background:var(--gold);
-    color:#0a1628;font-size:12px;font-weight:bold;display:flex;align-items:center;
-    justify-content:center;flex-shrink:0}
+  .install-step{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px}
+  .install-num{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0a1628;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .install-text{font-size:13px;color:var(--text);line-height:1.5}
-
-  /* SHARE BUTTON */
-  .share-btn{width:100%;background:linear-gradient(135deg,var(--gold),#b8920a);
-    border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:bold;
-    color:#0a1628;cursor:pointer;letter-spacing:0.5px;margin-top:8px;
-    box-shadow:0 4px 20px rgba(212,175,55,0.3)}
+  .share-btn{width:100%;background:linear-gradient(135deg,var(--gold),#b8920a);border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:bold;color:#0a1628;cursor:pointer;letter-spacing:0.5px;margin-top:8px;box-shadow:0 4px 20px rgba(212,175,55,0.3)}
+  .test-alert-btn{width:100%;margin-top:12px;padding:13px;border:none;border-radius:13px;background:linear-gradient(135deg,rgba(212,175,55,0.25),rgba(0,120,60,0.2));border:1px solid rgba(212,175,55,0.5);color:var(--gold);font-size:14px;font-weight:bold;cursor:pointer;letter-spacing:0.3px;font-family:'Georgia',serif}
+  .test-alert-btn:active{transform:scale(0.97);opacity:0.85}
 </style>
 </head>
 <body>
 <div class="bg-layer"></div>
 <div class="bg-pattern"></div>
 <div id="toast" class="toast"></div>
-<audio id="adhan-audio" preload="none" crossorigin="anonymous"></audio>
 
 <div id="app">
-  <!-- HEADER -->
   <div class="header">
     <div class="header-mosque">Al Noor Masjid · Romford</div>
     <div class="header-title">Prayer Times 🕌</div>
@@ -237,11 +167,12 @@
       <span>🔔 Tap to enable Adhan reminders (30 min before Jama'at)</span>
       <span style="font-size:18px">›</span>
     </div>
+    <div id="notif-ok-banner" class="notif-status ok" style="display:none">
+      ✅ Adhan reminders are active — tap 🔔 on any prayer to toggle
+    </div>
 
-    <!-- LONDON WAQT BAR -->
     <div id="london-strip" class="london-strip"></div>
 
-    <!-- NEXT PRAYER HERO -->
     <div id="hero-card" class="card card-gold hero" style="margin-bottom:12px">
       <div class="hero-label">⏳ Next Jama'at</div>
       <div class="hero-row">
@@ -264,14 +195,11 @@
         <div style="text-align:right"><div class="waqt-label">Time remaining</div><div class="waqt-remaining" id="hero-waqt-rem">—</div></div>
       </div>
       <div class="countdown-bar"><div class="countdown-fill" id="countdown-fill" style="width:0%"></div></div>
-      <div class="adhan-player">
-        <div class="adhan-label">🔊 Madinah Adhan</div>
-        <button class="adhan-btn" onclick="playAdhan()" title="Play Adhan">▶</button>
-        <button class="adhan-btn" onclick="stopAdhan()" style="background:rgba(212,175,55,0.3)" title="Stop">■</button>
-      </div>
+      <button class="test-alert-btn" onclick="testAlert()">
+        🔔 Test Alert (Adhan + Notification)
+      </button>
     </div>
 
-    <!-- PRAYER LIST -->
     <div id="prayer-list"></div>
   </div>
 
@@ -310,34 +238,29 @@
     </div>
   </div>
 
-  <!-- INFO / INSTALL TAB -->
+  <!-- INFO TAB -->
   <div id="tab-info" class="tab">
     <div class="card card-gold" style="margin-bottom:12px">
       <div style="font-size:19px;font-weight:bold;color:var(--gold);margin-bottom:4px">🕌 Al Noor Masjid</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:14px">and Education Trust</div>
       <div id="masjid-info"></div>
     </div>
-
     <div class="card" style="margin-bottom:12px">
       <div style="font-size:15px;font-weight:bold;color:var(--gold);margin-bottom:12px">📲 Install on Your Phone</div>
       <div id="install-steps"></div>
       <button class="share-btn" onclick="shareApp()">📤 Share with Others</button>
     </div>
-
     <div class="card">
       <div style="font-size:15px;font-weight:bold;color:var(--gold);margin-bottom:10px">🔔 About Reminders</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.7">
-        Adhan plays <strong style="color:var(--text)">30 minutes before</strong> each Jama'at time — only for prayers you've enabled. Tap the bell 🔔 on any prayer to toggle.
-        <br><br>
-        <strong style="color:var(--text)">London waqt times</strong> are live from the AlAdhan API. Your mosque's Jama'at times are from the official Al Noor Masjid 2026 calendar.
-        <br><br>
+        The Adhan plays <strong style="color:var(--text)">30 minutes before</strong> each Jama'at — only for prayers you've enabled. Tap 🔕 on any prayer to toggle reminders.<br><br>
+        <strong style="color:var(--text)">Important:</strong> Keep this page open (or add to Home Screen) for reminders to fire reliably. The adhan sound is generated directly in your browser — no external audio needed.<br><br>
         Prayer tracker data is saved privately on your device.
       </div>
     </div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="nav">
   <button class="nav-btn active" id="nav-today" onclick="switchTab('today')">
     <span class="nav-icon">🕌</span>
@@ -360,7 +283,6 @@
 
 <script>
 // ─── TIMETABLE DATA ───────────────────────────────────────────────────────────
-// [fajrBegins, fajrJamaat, sunrise, zuhrBegins, zuhrJamaat, asr1, asr2, asrJamaat, maghribBegins, maghribJamaat, ishaBegins, ishaJamaat]
 const TT = {
   5:{
     1:["3:52","4:45","5:30","1:03","1:30","5:01","6:05","6:45","8:25","8:30","9:38","10:00"],
@@ -640,109 +562,255 @@ function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let reminders = ls('noor_reminders',{fajr:false,zuhr:false,asr:false,maghrib:false,isha:false});
-let tracker   = ls('noor_tracker',{});   // {YYYY-MM-DD:{fajr:bool,...}}
+let tracker   = ls('noor_tracker',{});
 let notifOk   = false;
 let londonTimes = null;
 let viewMonth = new Date().getMonth()+1;
 let currentTab = 'today';
-let tickTimer = null;
 let adhanTimers = [];
-let userId = ls('noor_uid', null);
-if(!userId){userId='u'+Date.now().toString(36);ss('noor_uid',userId);}
+// Track which prayer alerts have already fired today to avoid double-playing
+let firedAlerts = ls('noor_fired_alerts', {});  // {YYYY-MM-DD_prayerKey: true}
+
+// ─── WEB AUDIO ADHAN ─────────────────────────────────────────────────────────
+// Generates an authentic-sounding adhan using the Web Audio API.
+// This works entirely offline with no external dependencies.
+let audioCtx = null;
+let adhanNodes = [];
+
+function getAudioCtx() {
+  if (!audioCtx || audioCtx.state === 'closed') {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Play a single note with vibrato (maqam-like)
+function playNote(ctx, freq, startTime, duration, gainVal, vibrato=0) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const masterGain = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, startTime);
+
+  if (vibrato > 0) {
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+    lfo.frequency.value = 5.5;
+    lfoGain.gain.value = vibrato;
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc.frequency);
+    lfo.start(startTime);
+    lfo.stop(startTime + duration);
+    adhanNodes.push(lfo);
+  }
+
+  // Natural envelope: fast attack, sustain, slow release
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(gainVal, startTime + 0.12);
+  gain.gain.setValueAtTime(gainVal, startTime + duration - 0.4);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+  // Warm reverb via second delayed oscillator
+  const osc2 = ctx.createOscillator();
+  const gain2 = ctx.createGain();
+  osc2.type = 'sine';
+  osc2.frequency.value = freq * 2.002; // slight detune for warmth
+  gain2.gain.setValueAtTime(0, startTime);
+  gain2.gain.linearRampToValueAtTime(gainVal * 0.15, startTime + 0.2);
+  gain2.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+  osc.connect(gain);
+  osc2.connect(gain2);
+  gain.connect(masterGain);
+  gain2.connect(masterGain);
+  masterGain.connect(ctx.destination);
+
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.05);
+  osc2.start(startTime);
+  osc2.stop(startTime + duration + 0.05);
+
+  adhanNodes.push(osc, osc2, gain, gain2, masterGain);
+}
+
+// Adhan phrase: Allahu Akbar (using Hijaz maqam frequencies)
+// Base: D4 = 293.66 Hz. Hijaz scale: D, Eb, F#, G, A, Bb, C#, D
+function playAdhanSound() {
+  stopAdhan();
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime + 0.1;
+
+  // Frequencies for Hijaz maqam (D Hijaz)
+  const D4=293.66, Eb4=311.13, Fs4=369.99, G4=392.00, A4=440.00, Bb4=466.16, Cs5=554.37, D5=587.33, G3=196.00, A3=220.00;
+
+  // Allahu Akbar (x4) — rising call
+  const phrases = [
+    // phrase: [freq, duration, gain, vibrato]
+    // "Al-la-hu Ak-bar"
+    [[G4,0.5,0.5,0],[A4,0.4,0.55,0],[G4,0.3,0.5,2],[Fs4,0.4,0.45,3],[G4,0.8,0.5,4]],
+    [[G4,0.5,0.5,0],[A4,0.4,0.55,0],[G4,0.3,0.5,2],[Fs4,0.4,0.45,3],[G4,0.8,0.5,4]],
+    [[G4,0.5,0.55,0],[Bb4,0.5,0.6,0],[A4,0.3,0.55,2],[G4,0.3,0.5,2],[Fs4,0.4,0.45,3],[G4,1.0,0.55,5]],
+    [[G4,0.5,0.55,0],[Bb4,0.5,0.6,0],[A4,0.3,0.55,2],[G4,0.3,0.5,2],[Fs4,0.4,0.45,3],[G4,1.0,0.55,5]],
+    // "Ash-ha-du an la i-la-ha il-lal-lah"
+    [[D5,0.6,0.6,0],[Cs5,0.4,0.6,2],[Bb4,0.5,0.55,3],[A4,0.4,0.5,2],[G4,0.3,0.45,2],[Fs4,0.3,0.4,2],[G4,0.3,0.45,2],[A4,0.3,0.5,3],[G4,1.2,0.55,5]],
+    [[D5,0.6,0.6,0],[Cs5,0.4,0.6,2],[Bb4,0.5,0.55,3],[A4,0.4,0.5,2],[G4,0.3,0.45,2],[Fs4,0.3,0.4,2],[G4,0.3,0.45,2],[A4,0.3,0.5,3],[G4,1.2,0.55,5]],
+    // "Ash-ha-du an-na Mu-ham-ma-dan Ra-soo-lul-lah"
+    [[G4,0.4,0.55,0],[A4,0.4,0.6,0],[Bb4,0.5,0.65,2],[A4,0.3,0.6,2],[G4,0.3,0.55,2],[Fs4,0.3,0.5,3],[Eb4,0.4,0.45,3],[D4,1.0,0.5,5]],
+    [[G4,0.4,0.55,0],[A4,0.4,0.6,0],[Bb4,0.5,0.65,2],[A4,0.3,0.6,2],[G4,0.3,0.55,2],[Fs4,0.3,0.5,3],[Eb4,0.4,0.45,3],[D4,1.0,0.5,5]],
+    // "Hay-ya 'a-las-sa-lah" (x2)
+    [[A4,0.5,0.6,0],[Bb4,0.5,0.65,2],[Cs5,0.4,0.7,2],[D5,0.3,0.7,3],[Cs5,0.4,0.65,3],[Bb4,0.4,0.6,3],[A4,1.0,0.6,5]],
+    [[A4,0.5,0.6,0],[Bb4,0.5,0.65,2],[Cs5,0.4,0.7,2],[D5,0.3,0.7,3],[Cs5,0.4,0.65,3],[Bb4,0.4,0.6,3],[A4,1.0,0.6,5]],
+    // "Hay-ya 'a-lal-fa-lah" (x2)
+    [[Bb4,0.5,0.65,0],[Cs5,0.5,0.7,2],[D5,0.4,0.72,2],[Cs5,0.4,0.68,3],[Bb4,0.4,0.63,3],[A4,0.4,0.58,3],[G4,1.2,0.6,5]],
+    [[Bb4,0.5,0.65,0],[Cs5,0.5,0.7,2],[D5,0.4,0.72,2],[Cs5,0.4,0.68,3],[Bb4,0.4,0.63,3],[A4,0.4,0.58,3],[G4,1.2,0.6,5]],
+    // "Allahu Akbar" (x2) — final
+    [[G4,0.5,0.55,0],[A4,0.4,0.6,0],[G4,0.3,0.55,2],[Fs4,0.4,0.5,3],[G4,0.9,0.55,5]],
+    [[G4,0.5,0.55,0],[A4,0.4,0.6,0],[G4,0.3,0.55,2],[Fs4,0.4,0.5,3],[G4,0.9,0.55,5]],
+    // "La i-la-ha il-lal-lah" — closing
+    [[G4,0.4,0.5,0],[Fs4,0.4,0.5,2],[Eb4,0.5,0.48,2],[D4,0.5,0.45,2],[Eb4,0.4,0.42,3],[D4,2.0,0.45,6]],
+  ];
+
+  let cursor = t;
+  const gap = 0.25; // gap between phrases
+
+  phrases.forEach(phrase => {
+    phrase.forEach(([freq, dur, gainV, vib]) => {
+      playNote(ctx, freq, cursor, dur, gainV * 0.7, vib);
+      cursor += dur * 0.85; // slight overlap for legato
+    });
+    cursor += gap;
+  });
+}
+
+function stopAdhan() {
+  adhanNodes.forEach(n => { try { n.stop && n.stop(); n.disconnect && n.disconnect(); } catch{} });
+  adhanNodes = [];
+}
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function t12(t, idx){
   if(!t||t==='—')return'—';
   const p=t.split(':').map(Number);
   let h=p[0], m=p[1];
-  // If idx is provided and >= 3, it's a PM prayer time
   if(idx !== undefined && idx >= 3 && h < 12) h += 12;
   const ap=h>=12?'PM':'AM', hh=h%12||12;
   return hh+':'+(m<10?'0':'')+m+' '+ap;
 }
-function toMins(t, prayerKey){
-  if(!t)return 0;
-  const p=t.split(':').map(Number);
-  let h=p[0], m=p[1];
-  // Prayer times are stored in 12-hour format without AM/PM.
-  // Rules based on Islamic prayer order for UK:
-  // Fajr: always AM (1–6 AM range) — h is already correct
-  // Sunrise: always AM — h is correct
-  // Zuhr: always PM after 12:00 — if h < 12, add 12 (e.g. 1:03 → 13:03)
-  // Asr: always PM — if h < 12, add 12 (e.g. 5:00 → 17:00)
-  // Maghrib: always PM — if h < 12, add 12 (e.g. 8:25 → 20:25)
-  // Isha: always PM — if h < 12, add 12 (e.g. 9:38 → 21:38), but 10:xx also PM
-  if(prayerKey==='zuhr' || prayerKey==='zuhrJamaat'){
-    if(h < 12) h += 12;
-  } else if(prayerKey==='asr'){
-    if(h < 12) h += 12;
-  } else if(prayerKey==='maghrib'){
-    if(h < 12) h += 12;
-  } else if(prayerKey==='isha'){
-    if(h < 12) h += 12;
-  }
-  return h*60+m;
-}
-// Convert a raw timetable time string to minutes, using index position to determine AM/PM
-// Indices: 0=fajrB,1=fajrJ,2=sunrise,3=zuhrB,4=zuhrJ,5=asr1,6=asr2,7=asrJ,8=maghribB,9=maghribJ,10=ishaB,11=ishaJ
 function idxToMins(t, idx){
   if(!t)return 0;
   const p=t.split(':').map(Number);
   let h=p[0], m=p[1];
-  // Indices 3-11 are all afternoon/evening (PM), except they may show as e.g. 1:30, 5:00, 8:25, 9:38
-  // Indices 0,1,2 are Fajr/Sunrise = always AM as stored (e.g. 3:52, 4:45, 5:30)
   if(idx >= 3 && h < 12) h += 12;
   return h*60+m;
+}
+function toMins(t){
+  if(!t)return 0;
+  const p=t.split(':').map(Number);
+  return p[0]*60+p[1];
 }
 function dateKey(d=new Date()){
   return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0');
 }
 function showToast(msg){
   const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),3000);
 }
 function getTodayData(){
   const n=new Date();
   return TT[n.getMonth()+1]?.[n.getDate()]||null;
 }
 
-// ─── ADHAN ───────────────────────────────────────────────────────────────────
-const ADHAN_URL='https://cdn.aladhan.com/audio/adhans/a7.mp3'; // Mishary — melodic
-function playAdhan(){
-  const a=document.getElementById('adhan-audio');
-  a.src=ADHAN_URL; a.play().catch(()=>showToast('Tap again to play audio'));
-}
-function stopAdhan(){
-  const a=document.getElementById('adhan-audio');
-  a.pause(); a.currentTime=0;
+// ─── NOTIFICATIONS + ADHAN SCHEDULING ────────────────────────────────────────
+// Strategy: poll every 30 seconds. When we're within 1 minute of the
+// 30-minute-before-jamaat window, play the adhan and fire a notification.
+// We store which alerts fired today to prevent duplicates.
+
+function alertKey(prayerKey) {
+  return dateKey() + '_' + prayerKey;
 }
 
-// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
-async function requestNotif(){
-  if(!('Notification' in window)){showToast('Notifications not supported here');return;}
-  const p=await Notification.requestPermission();
-  if(p==='granted'){notifOk=true;document.getElementById('notif-banner').style.display='none';showToast('✓ Adhan reminders enabled!');}
-  else showToast('Enable notifications in browser settings');
-}
-function scheduleReminders(data){
-  adhanTimers.forEach(clearTimeout);adhanTimers=[];
-  if(!notifOk||!data)return;
-  const now=new Date(),nowM=now.getHours()*60+now.getMinutes();
-  PRAYERS.forEach(p=>{
-    if(!reminders[p.key])return;
-    const jamaatM=idxToMins(data[p.ji],p.ji);
-    const alertM=jamaatM-30;
-    const diff=(alertM-nowM)*60000;
-    if(diff>0){
-      adhanTimers.push(setTimeout(()=>{
-        new Notification(`${p.label} Jama'at in 30 minutes`,{
-          body:`Al Noor Masjid — Jama'at at ${t12(data[p.ji],p.ji)}`,icon:'https://cdn.aladhan.com/audio/adhans/a7.mp3'
-        });
-        playAdhan();
-      },diff));
+function checkAndFireAlerts() {
+  const data = getTodayData();
+  if (!data) return;
+
+  const now = new Date();
+  const nowM = now.getHours() * 60 + now.getMinutes();
+  const nowS = now.getSeconds();
+
+  // Clean old fired alert keys (only keep today's)
+  const todayPrefix = dateKey() + '_';
+  Object.keys(firedAlerts).forEach(k => {
+    if (!k.startsWith(todayPrefix)) delete firedAlerts[k];
+  });
+
+  PRAYERS.forEach(p => {
+    if (!reminders[p.key]) return;
+
+    const jamaatM = idxToMins(data[p.ji], p.ji);
+    const alertM = jamaatM - 30; // fire 30 mins before jamaat
+    const key = alertKey(p.key);
+
+    if (firedAlerts[key]) return; // already fired today
+
+    // Fire when we're within the current minute of the alert time
+    // (within a 2-minute window to catch it even if tab was inactive)
+    const diff = alertM - nowM;
+    if (diff >= 0 && diff <= 2) {
+      firedAlerts[key] = true;
+      ss('noor_fired_alerts', firedAlerts);
+      fireAlert(p, data);
     }
   });
+}
+
+function fireAlert(p, data) {
+  // Play adhan sound
+  try { playAdhanSound(); } catch(e) { console.warn('Audio failed:', e); }
+
+  // Show browser notification if permitted
+  if (notifOk) {
+    try {
+      new Notification(`🕌 ${p.label} Jama\'at in 30 minutes`, {
+        body: `Al Noor Masjid — Jama\'at at ${t12(data[p.ji], p.ji)}. Come early for sunnah prayers.`,
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
+        badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
+        tag: 'noor-' + p.key,
+        requireInteraction: true
+      });
+    } catch(e) { console.warn('Notification failed:', e); }
+  }
+
+  showToast(`🔔 ${p.label} Jama'at in 30 minutes — ${t12(data[p.ji], p.ji)}`);
+}
+
+async function requestNotif() {
+  if (!('Notification' in window)) {
+    showToast('Notifications not supported on this browser');
+    return;
+  }
+  const p = await Notification.requestPermission();
+  if (p === 'granted') {
+    notifOk = true;
+    updateNotifBanners();
+    showToast('✓ Notifications enabled! Adhan will play 30 min before Jama\'at');
+  } else {
+    showToast('Please allow notifications in your browser/phone settings');
+  }
+}
+
+function updateNotifBanners() {
+  document.getElementById('notif-banner').style.display = notifOk ? 'none' : 'flex';
+  document.getElementById('notif-ok-banner').style.display = notifOk ? 'flex' : 'none';
+}
+
+function checkNotifStatus() {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    notifOk = true;
+    updateNotifBanners();
+  }
 }
 
 // ─── LONDON LIVE TIMES ───────────────────────────────────────────────────────
@@ -806,12 +874,10 @@ function updateHero(){
   heroBegins.textContent=`Begins: ${t12(next.begins,next.bi)}`;
   heroMins.textContent=next.minsUntil;
 
-  // progress ring — full circle = 176 units, map 0–60 mins
   const pct=Math.max(0,Math.min(1,(60-next.minsUntil)/60));
   prog.style.strokeDashoffset=176*(1-pct);
   fill.style.width=((1-next.minsUntil/Math.max(60,next.minsUntil+1))*100)+'%';
 
-  // waqt end = next prayer begins
   if(next.nextBi!==null){
     const endT=data[next.nextBi];
     const endM=idxToMins(endT,next.nextBi);
@@ -834,11 +900,13 @@ function renderPrayerList(){
     const isNext=PRAYERS.find(x=>idxToMins(data[x.ji],x.ji)>nowM)?.key===p.key;
     const isDone=jm<nowM;
     const remOn=reminders[p.key];
+    const minsUntilAlert = jm - nowM - 30;
+    const alertInfo = remOn && minsUntilAlert > 0 ? ` · 🔔 alert in ${minsUntilAlert}m` : '';
     return`<div class="prayer-row ${isNext?'p-active':''} ${isDone?'p-done':''}">
       <div class="prayer-icon">${p.icon}</div>
       <div class="prayer-info">
         <div class="prayer-name">${p.label}<span>${p.arabic}</span></div>
-        <div class="prayer-sub">Begins ${t12(data[p.bi],p.bi)}${p.key==='asr'?` · 2nd ${t12(data[6],6)}`:''}${isDone?' · Completed ✓':''}</div>
+        <div class="prayer-sub">Begins ${t12(data[p.bi],p.bi)}${p.key==='asr'?` · 2nd ${t12(data[6],6)}`:''}${isDone?' · Completed ✓':alertInfo}</div>
       </div>
       <div class="prayer-times">
         <div class="prayer-jamaat">${t12(data[p.ji],p.ji)}</div>
@@ -851,19 +919,72 @@ function renderPrayerList(){
   }).join('');
 }
 
+function testAlert(){
+  // Unlock audio first
+  try { getAudioCtx(); } catch(e) {}
+
+  // Play adhan sound
+  try { playAdhanSound(); } catch(e) { showToast('Audio failed — try again'); return; }
+
+  // Fire a test notification
+  if(!('Notification' in window)){
+    showToast('🔊 Adhan playing! (Notifications not supported on this browser)');
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    try {
+      new Notification("🕌 Test — Jama'at in 30 minutes", {
+        body: "This is how your real alert will look. Al Noor Masjid, Romford.",
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
+        tag: 'noor-test',
+        requireInteraction: false
+      });
+      showToast('✅ Test sent! Check your notification & listen for adhan');
+    } catch(e) {
+      showToast('🔊 Adhan playing! Notification failed — check browser settings');
+    }
+  } else if(Notification.permission === 'denied'){
+    showToast('🔊 Adhan playing! ⚠️ Notifications blocked — allow in settings');
+  } else {
+    // Ask for permission then fire
+    Notification.requestPermission().then(p => {
+      notifOk = p === 'granted';
+      updateNotifBanners();
+      if(p === 'granted'){
+        new Notification("🕌 Test — Jama'at in 30 minutes", {
+          body: "This is how your real alert will look. Al Noor Masjid, Romford.",
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
+          tag: 'noor-test'
+        });
+        showToast('✅ Notifications enabled! Test alert sent');
+      } else {
+        showToast('🔊 Adhan playing! Enable notifications for popup alerts');
+      }
+    });
+  }
+}
+
 function toggleReminder(key){
-  if(!notifOk){showToast('Enable notifications first 👆');return;}
-  reminders[key]=!reminders[key];ss('noor_reminders',reminders);
+  // Unlock audio context on user gesture (required by browsers)
+  try { getAudioCtx(); } catch(e) {}
+
+  if(!notifOk){
+    // Still allow sound-only reminders without notifications
+    showToast('Tip: Tap the banner above to also get notification popups');
+  }
+  reminders[key]=!reminders[key];
+  ss('noor_reminders',reminders);
+  // Clear today's fired alert for this key so it can re-fire if toggled back on
+  if(reminders[key]) {
+    delete firedAlerts[alertKey(key)];
+    ss('noor_fired_alerts', firedAlerts);
+  }
   renderPrayerList();
-  const data=getTodayData();scheduleReminders(data);
-  showToast(reminders[key]?`🔔 Adhan reminder on for ${key}`:`🔕 Reminder off for ${key}`);
+  showToast(reminders[key]?`🔔 Adhan reminder ON for ${key} (30 min before Jama'at)`:`🔕 Reminder OFF for ${key}`);
 }
 
 // ─── TIMETABLE ────────────────────────────────────────────────────────────────
-function changeMonth(d){
-  viewMonth=Math.min(12,Math.max(5,viewMonth+d));
-  renderTimetable();
-}
+function changeMonth(d){viewMonth=Math.min(12,Math.max(5,viewMonth+d));renderTimetable();}
 function renderTimetable(){
   document.getElementById('month-title').textContent=`${MONTHS[viewMonth]} 2026`;
   const now=new Date();
@@ -882,7 +1003,6 @@ function renderTimetable(){
 }
 
 // ─── TRACKER ─────────────────────────────────────────────────────────────────
-function todayTracked(){return tracker[dateKey()]||{};}
 function markPrayer(key){
   const dk=dateKey();
   if(!tracker[dk])tracker[dk]={};
@@ -894,8 +1014,6 @@ function markPrayer(key){
 function renderTracker(){
   const data=getTodayData();
   const today=new Date(),dk=dateKey();
-  // Week row
-  const weekEl=document.getElementById('tracker-week');
   const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   let weekHtml='';
   for(let i=6;i>=0;i--){
@@ -911,30 +1029,22 @@ function renderTracker(){
       </div>
     </div>`;
   }
-  weekEl.innerHTML=weekHtml;
-
-  // Prayer rows
-  const todayData=getTodayData();
-  const pEl=document.getElementById('tracker-prayers');
+  document.getElementById('tracker-week').innerHTML=weekHtml;
   const td2=tracker[dk]||{};
-  pEl.innerHTML=PRAYERS.map(p=>{
+  document.getElementById('tracker-prayers').innerHTML=PRAYERS.map(p=>{
     const done=!!td2[p.key];
     return`<div class="tp-row ${done?'tp-done':''}" onclick="markPrayer('${p.key}')">
       <div class="tp-icon">${p.icon}</div>
       <div class="tp-info">
         <div class="tp-name">${p.label} · ${p.arabic}</div>
-        <div class="tp-time">${todayData?`Jama'at ${t12(todayData[p.ji])}`:'—'}</div>
+        <div class="tp-time">${data?`Jama'at ${t12(data[p.ji],p.ji)}`:'—'}</div>
       </div>
       <div class="tp-check">${done?'✓':''}</div>
     </div>`;
   }).join('');
-
-  // Stats
   const todayCnt=Object.values(td2).filter(Boolean).length;
   document.getElementById('streak-today').textContent=`${todayCnt}/5`;
   document.getElementById('tracker-score').textContent=`${todayCnt}/5 today`;
-
-  // Week total
   let weekTotal=0;
   for(let i=0;i<7;i++){
     const d2=new Date(today);d2.setDate(today.getDate()-i);
@@ -942,8 +1052,6 @@ function renderTracker(){
     weekTotal+=Object.values(t2).filter(Boolean).length;
   }
   document.getElementById('streak-week').textContent=weekTotal;
-
-  // Streak
   let streak=0;
   for(let i=0;i<365;i++){
     const d2=new Date(today);d2.setDate(today.getDate()-i);
@@ -952,8 +1060,6 @@ function renderTracker(){
     else if(i>0)break;
   }
   document.getElementById('streak-streak').textContent=streak+'🔥';
-
-  // dot on nav
   document.getElementById('tracker-dot').classList.toggle('show',todayCnt<5);
 }
 
@@ -970,31 +1076,12 @@ function renderInfo(){
   document.getElementById('masjid-info').innerHTML=info.map(([l,v])=>
     `<div class="info-row"><div class="info-label">${l}</div><div class="info-val">${v}</div></div>`
   ).join('');
-
   const isIOS=/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
   const isAndroid=/android/.test(navigator.userAgent.toLowerCase());
   let steps=[];
-  if(isIOS){
-    steps=[
-      ['1','Open this page in <strong>Safari</strong> (not Chrome)'],
-      ['2','Tap the <strong>Share button</strong> (📤 at the bottom of Safari)'],
-      ['3','Scroll down and tap <strong>"Add to Home Screen"</strong>'],
-      ['4','Tap <strong>"Add"</strong> — app icon appears on your home screen!'],
-    ];
-  } else if(isAndroid){
-    steps=[
-      ['1','Tap the <strong>3-dot menu</strong> (⋮) in your browser'],
-      ['2','Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>'],
-      ['3','Tap <strong>Add / Install</strong> to confirm'],
-      ['4','App icon appears on your home screen!'],
-    ];
-  } else {
-    steps=[
-      ['iPhone','Safari → Share 📤 → Add to Home Screen'],
-      ['Android','Browser menu ⋮ → Add to Home Screen → Install'],
-      ['Share','Copy the URL and send it via WhatsApp, SMS, or email'],
-    ];
-  }
+  if(isIOS){steps=[['1','Open in <strong>Safari</strong> (not Chrome)'],['2','Tap the <strong>Share button</strong> (📤 bottom of Safari)'],['3','Tap <strong>"Add to Home Screen"</strong>'],['4','Tap <strong>"Add"</strong> — icon appears on home screen!']];}
+  else if(isAndroid){steps=[['1','Tap the <strong>3-dot menu</strong> (⋮) in your browser'],['2','Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>'],['3','Tap <strong>Add / Install</strong> to confirm'],['4','App icon appears on your home screen!']];}
+  else{steps=[['iPhone','Safari → Share 📤 → Add to Home Screen'],['Android','Browser menu ⋮ → Add to Home Screen'],['Share','Copy the URL and send via WhatsApp / SMS']];}
   document.getElementById('install-steps').innerHTML=steps.map(([n,t])=>
     `<div class="install-step"><div class="install-num">${n}</div><div class="install-text">${t}</div></div>`
   ).join('');
@@ -1002,14 +1089,9 @@ function renderInfo(){
 
 async function shareApp(){
   const url=window.location.href;
-  const msg=`🕌 Al Noor Masjid Prayer Times App\nJama'at times, Adhan reminders & prayer tracker for Romford.\n\n${url}`;
-  if(navigator.share){
-    try{await navigator.share({title:'Al Noor Masjid Prayer Times',text:msg,url});}
-    catch{}
-  } else {
-    await navigator.clipboard.writeText(url).catch(()=>{});
-    showToast('Link copied to clipboard!');
-  }
+  const msg=`🕌 Al Noor Masjid Prayer Times\nJama'at times + Adhan reminders for Romford.\n\n${url}`;
+  if(navigator.share){try{await navigator.share({title:'Al Noor Masjid',text:msg,url});}catch{}}
+  else{await navigator.clipboard.writeText(url).catch(()=>{});showToast('Link copied!');}
 }
 
 // ─── TAB SWITCHING ────────────────────────────────────────────────────────────
@@ -1028,62 +1110,42 @@ function switchTab(tab){
   document.getElementById('app').scrollTop=0;
 }
 
-// ─── HEADER DATE ─────────────────────────────────────────────────────────────
+// ─── HEADER ───────────────────────────────────────────────────────────────────
 function updateHeader(){
   const n=new Date();
   document.getElementById('hdr-date').textContent=n.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  if(londonTimes){
-    // try to get Hijri from AlAdhan response cached data
-    const hijriEl=document.getElementById('hdr-hijri');
-    if(hijriEl&&!hijriEl.dataset.set) fetchHijri(n,hijriEl);
-  }
 }
-async function fetchHijri(n,el){
+async function fetchHijri(){
+  const n=new Date();
   try{
     const r=await fetch(`https://api.aladhan.com/v1/gToH?date=${n.getDate()}-${n.getMonth()+1}-${n.getFullYear()}`);
     const j=await r.json();
-    if(j.code===200){
-      const h=j.data.hijri;
-      el.textContent=`${h.day} ${h.month.en} ${h.year} AH`;
-      el.dataset.set='1';
-    }
+    if(j.code===200){const h=j.data.hijri;document.getElementById('hdr-hijri').textContent=`${h.day} ${h.month.en} ${h.year} AH`;}
   }catch{}
 }
 
-// ─── TICK ────────────────────────────────────────────────────────────────────
+// ─── MAIN TICK ────────────────────────────────────────────────────────────────
 function tick(){
   updateHero();
-  if(londonTimes)renderLondonStrip();
-}
-
-// ─── NOTIFICATION CHECK ───────────────────────────────────────────────────────
-function checkNotifStatus(){
-  if('Notification' in window && Notification.permission==='granted'){
-    notifOk=true;
-    document.getElementById('notif-banner').style.display='none';
-    const data=getTodayData();scheduleReminders(data);
-  }
+  if(londonTimes) renderLondonStrip();
+  checkAndFireAlerts(); // ← This is the key fix: checks every 30s if an alert is due
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 (async function init(){
   updateHeader();
   checkNotifStatus();
-  const data=getTodayData();
   updateHero();
   renderPrayerList();
   renderTracker();
   renderInfo();
-  viewMonth=new Date().getMonth()+1;
-  if(viewMonth<5)viewMonth=5;
+  viewMonth = Math.max(5, new Date().getMonth()+1);
   renderTimetable();
-  // Fetch London times
   await fetchLondon();
+  fetchHijri();
   updateHeader();
-  // Tick every 30 seconds
-  tickTimer=setInterval(tick,30000);
-  // Reschedule reminders after fetch
-  if(notifOk)scheduleReminders(data);
+  // Poll every 30 seconds — checks for adhan alerts and refreshes display
+  setInterval(tick, 30000);
 })();
 </script>
 <script>
